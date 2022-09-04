@@ -1,0 +1,923 @@
+﻿@page
+@model IndexModel
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration config
+@{
+    string baseAdress = config.GetSection("BaseAddress").Value;
+}
+<script defer src="https://unpkg.com/alpinejs@3.10.3/dist/cdn.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+    [x-cloak] {
+        display: none;
+    }
+</style>
+
+<head>
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="HandheldFriendly" content="true">
+</head>
+
+<div x-data="{ categories: [], recipes: [], expandCategory: false, expandRecipe: false, logged: '' , logScreen:true}" x-effect="categories = await listCategories(logged);recipes = await listRecipes(logged);" x-cloak x-transition>
+
+
+    <div x-show="logScreen" x-data="{ expandLogin:true , expandRegister:false }" style="overflow:hidden;" x-cloak x-transition>
+
+        <!--Log in-->
+
+        <div x-data="{ user: { username:'' , password: '' } }" x-show="expandLogin" style="margin-top:200px" x-cloak x-transition>
+            <div class="align-content-center col-6 w-25" style="margin:auto;text-align:center;color:#1A2238;">
+                <div class="form-floating form-outline mb-4">
+                    <input x-model="user.username" class="form-control" />
+                    <label class="form-label" for="floatingInput">Username</label>
+                </div>
+                <div class="form-floating form-outline mb-4">
+                    <input x-model="user.password" type="password" class="form-control" />
+                    <label class="form-label">Password</label>
+                </div>
+                <button x-on:click="logged=await login(user);logScreen=!logged;fire(logged,'Logged in successfully')" class="btn btn-success"><i class="bi bi-door-open-fill"> Sign in</i></button>
+                <script>
+                    var logged;
+                    var antiforgery;
+                    function fire(logged, msg) {
+                        if (logged) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: msg,
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }
+                        else if (logged === false) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Invalid data',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }
+                        else {
+
+                        }
+                    }
+                    async function login(user) {
+                        let url = '@baseAdress' + 'login';
+                        user = {
+                            'Username': user.username,
+                            'Password': user.password
+                        }
+                        const response = await fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            credentials: 'include',
+                            body: JSON.stringify(user)
+                        })
+                            .then(res => { return res })
+                        if (response.ok) {
+                            logged = await response.clone().text();
+                            antiforgery = await getToken();
+                            let id = await getUserId(user);
+                            setInterval(await getNewToken, 120000, id, user);
+                            return response.text();
+                        }
+                        else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: await response.text(),
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }
+                    }
+                    async function getRefreshToken(user) {
+                        let url = '@baseAdress' + 'get-rt';
+                        const response = await fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + window.logged,
+                                "X-XSRF-TOKEN": window.antiforgery
+                            },
+                            credentials: 'include',
+                            body: JSON.stringify(user)
+                        })
+                            .then(res => { return res })
+                        if (response.ok)
+                            return response.text();
+                        else
+                            return false;
+                    }
+                    async function getUserId(user) {
+                        let url = '@baseAdress' + 'get-id';
+                        const response = await fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + window.logged,
+                                "X-XSRF-TOKEN": window.antiforgery
+                            },
+                            credentials: 'include',
+                            body: JSON.stringify(user)
+                        })
+                            .then(res => { return res })
+                        if (response.ok) {
+                            return response.json();
+                        }
+                        else
+                            return false;
+                    }
+                </script>
+                <br /><br />
+                <div class="text-center">
+                    <p style="color:#66FCF1">Not a member? <a x-on:click="expandLogin=false;expandRegister=true;" class="btn btn-outline-primary">Register</a></p>
+                </div>
+            </div>
+        </div>
+
+        <!--Register-->
+
+        <div x-data="{ newUser : { username:'' , password:'' , repeatedPassword :'' } , created:null }" x-show="expandRegister" style="margin-top:200px" x-cloak x-transition>
+            <form method="post" class="align-content-center col-6 w-25 needs-validation" style="margin:auto;text-align:center;color:#1A2238;" novalidate>
+                <div class="form-floating form-outline mb-4">
+                    <input x-model="newUser.username" class="form-control" required />
+                    <label class="form-label">Username</label>
+                    <div class="valid-feedback" style="font-size:large">
+                        Looks good!
+                    </div>
+                    <div class="invalid-feedback" style="font-size:large">
+                        Cant be empty.
+                    </div>
+                </div>
+                <div class="form-floating form-outline mb-4">
+                    <input x-model="newUser.password" type="password" class="form-control" required />
+                    <label class="form-label">Password</label>
+                    <div class="valid-feedback" style="font-size:large">
+                        Looks good!
+                    </div>
+                    <div class="invalid-feedback" style="font-size:large">
+                        Cant be empty.
+                    </div>
+                </div>
+                <div class="form-floating form-outline mb-4">
+                    <input x-model="newUser.repeatedPassword" type="password" class="form-control" required />
+                    <label class="form-label">Repeat password</label>
+                    <div class="valid-feedback" style="font-size:large">
+                        Looks good!
+                    </div>
+                    <div class="invalid-feedback" style="font-size:large">
+                        Cant be empty.
+                    </div>
+                </div>
+                <button x-on:click="created=await register(newUser);fire(created,'Created successfully');expandRegister=!created;expandRegister=!created;expandLogin=!expandRegister" type="button" class="btn btn-success btn-block mb-3 isWorking" disabled><i class="bi bi-patch-plus"> Sign up</i></button>
+                <script>
+                    async function register(newUser) {
+                        let url = '@baseAdress' + 'create-user';
+                        if (newUser.password != newUser.repeatedPassword) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Passwords dont match',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }
+                        else {
+                            newUser = {
+                                'Username': newUser.username,
+                                'Password': newUser.password
+                            }
+                            const response = await fetch(url, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                credentials: 'include',
+                                body: JSON.stringify(newUser)
+                            })
+                                .then(res => { return res })
+                            if (response.ok)
+                                return true;
+                            else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: await response.text(),
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                })
+                            }
+                        }
+                    }
+                </script>
+                <div class="text-center">
+                    <p style="color:#66FCF1">Already have an account? <a x-on:click="expandLogin=true;expandRegister=false;" class="btn btn-outline-primary">Sign in</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div x-show="logged" style="overflow-y:auto;overflow-x:hidden" x-cloak x-transition>
+
+        <!--Nav Bar-->
+
+        <header>
+            <nav class="row navbar navbar-expand" style="height:60px;width:100%">
+                <div class="container-fluid">
+                    <div class="collapse navbar-collapse" id="navbarColor03">
+                        <ul class="navbar-nav">
+                            <li style="margin-top:30px">
+                                <div class="logo-holder logo-5">
+                                    <a x-on:click="expandRecipe=false;expandCategory=false;" class="nav-link text-light">
+                                        <h3>Yum</h3>
+                                        <p>City</p>
+                                    </a>
+                                </div>
+                            </li>
+                        </ul>
+                        <div class="ms-auto">
+                            <a onClick="window.location.reload();"
+                               class="btn btn-outline-dark" style="color:#66FCF1">
+                                <span class="glyphicon glyphicon-log-out"></span> Log out
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <!--Home-->
+
+        <div class="container text-center">
+            <div class="row row-cols-1 row-cols-md-2 g-3 m-auto" style="grid-column-gap:200px">
+                <div class="col col-sm-5" style="border-style:groove;border-color:#66FCF1;">
+                    <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <img src="~/Pictures/Food1.jpg" class="d-block w-100" style="height:350px;">
+                            </div>
+                            <div class="carousel-item">
+                                <img src="~/Pictures/Food2.jpg" class="d-block w-100" style="height:350px;">
+                            </div>
+                            <div class="carousel-item">
+                                <img src="~/Pictures/Food3.jpg" class="d-block w-100" style="height:350px;">
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="color:#C5C6C7;text-align:center;margin-top:15px;font-family:'Square Peg',cursive;">cook what you love</h4>
+                        <a x-on:click="recipes = await listRecipes();expandRecipe= !expandRecipe;expandCategory=false;scroll('recipe')" style="background-color:#1F2833;color:#C5C6C7;margin-top:25px;" class="btn m-2">Recipes</a>
+                        <a id="scrollRecipe" href="#autoScroll" hidden></a>
+                        <script>
+                            async function listRecipes() {
+                                let url = '@baseAdress' + 'list-recipes';
+                                const response = await fetch(url, {
+                                    method: 'GET',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'Authorization': 'Bearer ' + window.logged,
+                                        "X-XSRF-TOKEN": window.antiforgery
+                                    },
+                                    credentials: 'include'
+                                })
+                                    .then(res => { return res })
+                                if (response.ok)
+                                    return response.json();
+                            }
+                        </script>
+                    </div>
+                </div>
+                <div class="col col-sm-5" style="border-style:groove;border-color:#66FCF1">
+                    <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <img src="~/Pictures/Cat1.jpg" class="d-block w-100" style="height:350px;">
+                            </div>
+                            <div class="carousel-item">
+                                <img src="~/Pictures/Cat2.jpg" class="d-block w-100" style="height:350px;">
+                            </div>
+                            <div class="carousel-item">
+                                <img src="~/Pictures/Cat3.jpg" class="d-block w-100" style="height:350px;">
+                            </div>
+                        </div>
+                    </div>
+                    <h4 style="color:#C5C6C7;text-align:center;margin-top:15px;font-family:'Square Peg',cursive;">discover different cultures</h4>
+                    <a x-on:click="categories = await listCategories();expandCategory= !expandCategory;expandRecipe=false;scroll('category')" style="background-color:#1F2833;color:#C5C6C7;margin-top:25px" class="btn m-2">Categories</a>
+                    <a id="scrollCategory" href="#autoScrollCategories" hidden></a>
+                    <script>
+                        async function listCategories() {
+                            let url = '@baseAdress' + 'list-categories';
+                            const response = await fetch(url, {
+                                method: 'GET',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    "X-XSRF-TOKEN": window.antiforgery,
+                                    'Authorization': 'Bearer ' + window.logged
+                                }, credentials: 'include'
+                            })
+                                .then(res => { return res })
+                            if (response.ok)
+                                return response.json();
+                        }
+                    </script>
+                </div>
+            </div>
+        </div>
+
+        <!--List Categories-->
+
+        <div x-data="{ expandCreate:false, chosenCategory:'', expandDelete:false, expandEdit:false,position:-1,deleted:null,newCategory:'' }" x-show="expandCategory" x-cloak x-transition>
+            <div class="row row-cols-1 row-cols-md-3 g-2 text-center" id="autoScrollCategories">
+                <template x-for="(category, index) in categories">
+                    <div>
+                        <div class="col">
+                            <div class="card h-100 text-center" style="border:groove;border-color:#66FCF1;background-color:transparent;margin-left:2px;margin-top:50px;">
+                                <div class="card-body">
+                                    <h5 x-text="category" class="card-title" style="color:white"></h5>
+                                    <a x-on:click="chosenCategory= category ;position=index+1;expandDelete=false;expandCreate=false" class="btn btn-dark" style="background-color:#1F2833;color:#C5C6C7;margin-top:10px;" data-bs-toggle="modal" data-bs-target="#editCategory"><i class="bi bi-pencil-square" style="font-style:normal"> Edit</i></a>
+                                    <a x-on:click="chosenCategory= category ;" class="btn btn-danger" style="color:white;margin-top:10px;" data-bs-toggle="modal" data-bs-target="#deleteCategoryModal"><i class="bi bi-trash" style="font-style:normal"> Delete</i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+            <div class="text-center m-4">
+                <button x-data="{created :false}" x-on:click="expandEdit=false;expandDelete=false;newCategory=''" style="background-color:#252f3e;color:white;" class="btn text-center" data-bs-toggle="modal" data-bs-target="#createCategory"><i class="bi bi-plus-circle" style="font-style:normal"> Create Category</i></button>
+            </div>
+
+            <!--Create Category-->
+
+            <div class="modal fade" id="createCategory" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel" style="color:black">New Category</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form class="align-content-center col-6 needs-validation" style="margin:auto;text-align:center;margin-top:50px;color:#1A2238" novalidate>
+                                <input x-model="newCategory" placeholder="Enter category name" type="text" required />
+                                <div class="valid-feedback" style="font-size:large">
+                                    Looks good!
+                                </div>
+                                <div class="invalid-feedback" style="font-size:large">
+                                    Cant be empty.
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer m-auto">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" x-on:click="created=await createCategory(newCategory);expandCreate= !created;fire(created,'Created successfully');newCategory='';categories=await listCategories()" class="btn btn-success text-center isWorking" style="font-style:normal" data-bs-dismiss="modal" disabled> Add</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script>
+                async function createCategory(category) {
+                    let url = '@baseAdress' + 'add-category';
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            "X-XSRF-TOKEN": window.antiforgery,
+                            'Authorization': 'Bearer ' + window.logged
+                        },
+                        credentials: 'include',
+                        body: JSON.stringify(category)
+                    })
+                        .then(res => { return res })
+                    if (response.ok) {
+                        scroll('category');
+                        return true;
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: await response.text(),
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                }
+            </script>
+
+            <!--Delete Category-->
+
+            <div class="modal fade" id="deleteCategoryModal" tabindex="-1" aria-labelledby="deleteCategoryModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body" style="text-align:center">
+                            Are you sure?
+                            <br />
+                            You won't be able to revert this!
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button x-on:click="deleted=await deleteCategory(chosenCategory);expandEdit=false;expandCreate=false;fire(deleted,'Deleted Successfully');categories = await listCategories()" type="button" class="btn btn-primary" style="margin-right:125px" data-bs-dismiss="modal">Yes, delete it!</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                async function deleteCategory(category) {
+                    let url = '@baseAdress' + 'delete-category';
+                    const response = await fetch(url, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            "X-XSRF-TOKEN": window.antiforgery,
+                            'Authorization': 'Bearer ' + window.logged
+                        },
+                        credentials: 'include',
+                        body: JSON.stringify(category)
+                    })
+                        .then(res => { return res })
+                    if (response.ok) {
+                        scroll('category');
+                        return true;
+                    }
+                    else
+                        return false;
+                }
+            </script>
+
+            <!--Edit Category-->
+
+            <div class="modal fade" id="editCategory" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel" style="color:black">Edit Category</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" class="align-content-center col-6 needs-validation" style="margin:auto;text-align:center;margin-top:50px;color:#1A2238" novalidate>
+                                <input x-model="chosenCategory" type="text" required />
+                                <div class="valid-feedback" style="font-size:large">
+                                    Looks good!
+                                </div>
+                                <div class="invalid-feedback" style="font-size:large">
+                                    Cant be empty.
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer m-auto">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" x-on:click="edited = await editCategory(position,chosenCategory);expandEdit= !edited;fire(edited,'Edited Successfully');categories = await listCategories();" class="btn btn-success isWorking" style="font-style:normal" data-bs-dismiss="modal"> Edit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script>
+                async function editCategory(position, newCategory) {
+                    let url = '@baseAdress' + 'update-category/' + position;
+                    const response = await fetch(url, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            "X-XSRF-TOKEN": window.antiforgery,
+                            'Authorization': 'Bearer ' + window.logged
+                        },
+                        credentials: 'include',
+                        body: JSON.stringify(newCategory)
+                    })
+                        .then(res => { return res })
+                    if (response.ok) {
+                        scroll('category');
+                        return true;
+                    }
+                    else
+                        return false;
+                }
+            </script>
+        </div>
+
+        <!--List Recipes-->
+
+        <div x-data="{ expandCreate:false, chosenRecipe:{Title:'', Ingredients:[], Instructions:[], Categories:[]}, expandDelete:false, expandEdit:false, ing:'' , ins:'',editIngredients:'' , editInstructions:'',deleteId:'' }" x-show="expandRecipe" x-cloak x-transition>
+            <div class="row row-cols-1 row-cols-md-4 g-2 m-auto text-center" id="autoScroll">
+                <template x-for="recipe in recipes">
+                    <div class="col">
+                        <div class="card h-100 text-center m-3" style="background-color:transparent;border:groove;border-color:#66FCF1;">
+                            <div class="card-body">
+                                <h5 x-text="recipe.title" class="card-title" style="color:white"></h5>
+                                <div x-data="{ expanded: false }">
+                                    <button x-on:click="expanded = ! expanded" style="background-color:#45A29E;color:black;margin-top:10px;font-style:normal" class="text-center"><i class="bi bi-search" style="font-style:normal"> Show Ingredients</i></button>
+                                    <template x-for="ing in recipe.ingredients">
+                                        <p x-text="'- '+ing" x-show="expanded" x-collapse class="card-text text-start" x-transition style="color:white"></p>
+                                    </template>
+                                </div>
+                                <br>
+                                <div x-data="{ expanded: false }">
+                                    <button x-on:click="expanded = ! expanded" style="background-color:#45A29E;color:black;margin-top:10px;font-style:normal" class="text-center"><i class="bi bi-search" style="font-style:normal"> Show Instructions</i></button>
+                                    <template x-for="ins in recipe.instructions">
+                                        <p x-text="'- '+ins" x-show="expanded" x-collapse class="card-text text-start" x-transition style="color:white"></p>
+                                    </template>
+                                </div>
+                                <br>
+                                <div x-data="{ expanded: false }">
+                                    <button x-on:click="expanded = ! expanded" style="background-color:#45A29E;color:black;margin-top:10px;font-style:normal" class="text-center"><i class="bi bi-search" style="font-style:normal"> Show Categories</i></button>
+                                    <template x-for="cat in recipe.categories">
+                                        <p x-text="'- '+cat" x-show="expanded" x-collapse class="card-text text-start" x-transition style="color:white"></p>
+                                    </template>
+                                </div>
+                                <br>
+                                <a x-on:click="chosenRecipe.title=recipe.title;chosenRecipe.id=recipe.id;chosenRecipe.ingredients=recipe.ingredients;chosenRecipe.instructions=recipe.instructions;chosenRecipe.categories=recipe.categories;[chosenRecipe,editIngredients,editInstructions]=adjustEdit(chosenRecipe,editIngredients,editInstructions);expandDelete=false;expandCreate=false;toast(expandEdit);categories = await listCategories()" class="btn btn-dark" style="background-color:#1F2833;color:#C5C6C7;margin-top:10px;font-style:normal" data-bs-toggle="modal" data-bs-target="#editRecipe"><i class="bi bi-pencil-square" style="font-style:normal"> Edit</i></a>
+                                <a x-on:click="deleteId=recipe.id" class="btn btn-danger" style="color:white;margin-top:10px;font-style:normal" data-bs-toggle="modal" data-bs-target="#deleteRecipeModal"><i class="bi bi-trash" style="font-style:normal"> Delete</i></a>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+            <div class="text-center m-4">
+                <button x-on:click="expandDelete=false;expandEdit=false;categories = await listCategories();[chosenRecipe,ing,ins]=clear(chosenRecipe,ing,ins)" style="background-color:#252f3e;color:white;" class="btn" data-bs-toggle="modal" data-bs-target="#createRecipe"><i class="bi bi-plus-circle" style="font-style:normal"> Create Recipe</i></button>
+            </div>
+
+            <!--Create Recipe-->
+
+            <div class="modal fade" id="createRecipe" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel" style="color:black">Create Recipe</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" class="align-content-center col-6 needs-validation" style="margin:auto;text-align:center;margin-top:50px;color:black" novalidate>
+                                <div>
+                                    <div class="row mt-4 col-11 m-auto">
+                                        <label style="text-align:left">Recipe Title</label>
+                                        <input class="form-control" x-model="chosenRecipe.Title" required>
+                                        <div class="valid-feedback" style="font-size:large">
+                                            Looks good!
+                                        </div>
+                                        <div class="invalid-feedback" style="font-size:large">
+                                            Cant be empty.
+                                        </div>
+                                    </div>
+                                    <div class="row mt-4 col-11 m-auto">
+                                        <label style="text-align:left">Ingredients</label>
+                                        <textarea class="form-control resize" x-model="ing" placeholder="After every ingredient press enter for new line." rows="5" cols="30" required></textarea>
+                                        <div class="valid-feedback" style="font-size:large">
+                                            Looks good!
+                                        </div>
+                                        <div class="invalid-feedback" style="font-size:large">
+                                            Cant be empty.
+                                        </div>
+                                    </div>
+                                    <div class="row mt-4 col-11 m-auto">
+                                        <label style="text-align:left">Instructions</label>
+                                        <textarea class="form-control resize" x-model="ins" placeholder="After every instructions press enter for new line." rows="5" cols="30" required></textarea>
+                                        <div class="valid-feedback" style="font-size:large">
+                                            Looks good!
+                                        </div>
+                                        <div class="invalid-feedback" style="font-size:large">
+                                            Cant be empty.
+                                        </div>
+                                    </div>
+                                    <div class="row mt-4 col-11 m-auto">
+                                        <form method="post">
+                                            <label style="text-align:left">Choose one or more category</label>
+                                            <br>
+                                            <select class="form-control" x-model="chosenRecipe.Categories" multiple style="color:black" required>
+                                                <template x-for="cat in categories">
+                                                    <option x-model="cat" value="cat" x-text="cat"></option>
+                                                </template>
+                                            </select>
+                                            <div class="valid-feedback" style="font-size:large">
+                                                Looks good!
+                                            </div>
+                                            <div class="invalid-feedback" style="font-size:large">
+                                                Cant be empty.
+                                            </div>
+                                            <p style="font-weight:bold">Hold down the Ctrl (windows) or Command (Mac) button to select multiple options.</p>
+                                        </form>
+                                    </div>
+                                    <br><br>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer m-auto">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button x-on:click="chosenRecipe= adjustRecipe(chosenRecipe,ing,ins);created=await createRecipe(chosenRecipe);recipes = await listRecipes();fire(created,'Created successfully');expandCreate=!created;" type="button" class="btn btn-success isWorking" data-bs-dismiss="modal" disabled><i class="bi bi-plus-circle-fill" style="font-style:normal"> Create Recipe</i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                async function createRecipe(recipe) {
+                    recipe = {
+                        'Title': recipe.Title,
+                        'Ingredients': recipe.Ingredients,
+                        'Instructions': recipe.Instructions,
+                        'Categories': recipe.Categories
+                    }
+                    let url = '@baseAdress' + 'add-recipe';
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            "X-XSRF-TOKEN": window.antiforgery,
+                            'Authorization': 'Bearer ' + window.logged
+                        },
+                        credentials: 'include',
+                        body: JSON.stringify(recipe)
+                    })
+                        .then(res => { return res })
+                    if (response.ok) {
+                        scroll('recipe');
+                        return true;
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: await response.text(),
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                }
+                function adjustRecipe(chosenRecipe, ing, ins) {
+                    ing = ing.trim();
+                    ins = ins.trim();
+                    ing = ing.replaceAll('/', '-');
+                    ins = ins.replaceAll('/', '-');
+                    chosenRecipe.Ingredients = ing.split('\n');
+                    chosenRecipe.Instructions = ins.split('\n');
+                    return chosenRecipe;
+                }
+                function clear(chosenRecipe, ing, ins) {
+                    ing = '';
+                    ins = '';
+                    chosenRecipe.Title = '';
+                    chosenRecipe.Categories = [];
+                    chosenRecipe.ingredients = [];
+                    chosenRecipe.Instructions = [];
+                    return [chosenRecipe, ing, ins];
+                }
+            </script>
+
+            <!--Delete Recipe-->
+
+            <div class="modal fade" id="deleteRecipeModal" tabindex="-1" aria-labelledby="deleteRecipeModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body" style="text-align:center">
+                            Are you sure?
+                            <br />
+                            You won't be able to revert this!
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button x-on:click="deleted=await deleteRecipe(deleteId);expandEdit=false;expandCreate=false;fire(deleted,'Deleted Successfully');recipes = await listRecipes()" type="button" class="btn btn-primary" style="margin-right:125px" data-bs-dismiss="modal">Yes, delete it!</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                async function deleteRecipe(id) {
+                    let url = '@baseAdress' + 'delete-recipe';
+                    const response = await fetch(url, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            "X-XSRF-TOKEN": window.antiforgery,
+                            'Authorization': 'Bearer ' + window.logged
+                        },
+                        credentials: 'include',
+                        body: JSON.stringify(id)
+                    })
+                        .then(res => { return res })
+                    if (response.ok) {
+                        scroll('recipe');
+                        return true;
+                    }
+                    else
+                        return false;
+                }
+            </script>
+
+            <!--Update Recipe-->
+            <!--Note to User-->
+
+            <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+                <div id="liveToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" style="background-color:#66FCF1">
+                    <div class="toast-header">
+                        <strong class="me-auto">Yum City</strong>
+                        <small>Just Now!</small>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body" style="background-color:#1F2833">
+                        Hello, Chief! separate between ingredients / instructions with a new line
+                    </div>
+                </div>
+                <script>
+                    var options = {
+                        animation: true,
+                        delay: 5000
+                    };
+                    function toast(flag) {
+                        if (flag) {
+                            let element = document.getElementById("liveToast");
+                            let toastElement = new bootstrap.Toast(element, options);
+                            toastElement.show();
+                        }
+                    }
+                </script>
+            </div>
+
+            <div class="modal fade" id="editRecipe" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel" style="color:black">Edit Recipe</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" class="align-content-center col-6 needs-validation validate" style="margin:auto;text-align:center;margin-top:50px;color:black" novalidate>
+                                <input x-model="chosenRecipe.id" hidden>
+                                <div>
+                                    <div class="row mt-4 col-11 m-auto">
+                                        <label style="text-align:left">Recipe Title</label>
+                                        <input x-model="chosenRecipe.title" class="form-control" required>
+                                        <div class="valid-feedback" style="font-size:large">
+                                            Looks good!
+                                        </div>
+                                        <div class="invalid-feedback" style="font-size:large">
+                                            Cant be empty.
+                                        </div>
+                                    </div>
+                                    <div class="row mt-4 col-11 m-auto">
+                                        <label style="text-align:left">Ingredients</label>
+                                        <textarea class="form-control resize" x-model="editIngredients" placeholder="separate between ingredients with a ," rows="5" cols="30" required></textarea>
+                                        <div class="valid-feedback" style="font-size:large">
+                                            Looks good!
+                                        </div>
+                                        <div class="invalid-feedback" style="font-size:large">
+                                            Cant be empty.
+                                        </div>
+                                    </div>
+                                    <div class="row mt-4 col-11 m-auto">
+                                        <label style="text-align:left">Instructions</label>
+                                        <textarea class="form-control resize" x-model="editInstructions" placeholder="separate between instructions with a ," rows="5" cols="30" required></textarea>
+                                        <div class="valid-feedback" style="font-size:large">
+                                            Looks good!
+                                        </div>
+                                        <div class="invalid-feedback" style="font-size:large">
+                                            Cant be empty.
+                                        </div>
+                                    </div>
+                                    <div class="row mt-4 col-11 m-auto">
+                                        <form method="post">
+                                            <label style="font:bolder;text-align:left" class="fw-bold">Choose one or more category</label>
+                                            <br>
+                                            <select class="form-control" x-model="chosenRecipe.categories" multiple style="color:black" required>
+                                                <template x-for="cat in categories">
+                                                    <option x-model="cat" value="cat" x-text="cat"></option>
+                                                </template>
+                                            </select>
+                                            <p style="font-weight:bolder">Hold down the Ctrl (windows) or Command (Mac) button to select multiple options.</p>
+                                            <div class="valid-feedback" style="font-size:large">
+                                                Looks good!
+                                            </div>
+                                            <div class="invalid-feedback" style="font-size:large">
+                                                Cant be empty.
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <br>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer m-auto">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button x-on:click="chosenRecipe=adjust(chosenRecipe,editIngredients,editInstructions);edited=await updateRecipe(chosenRecipe,chosenRecipe.id);expandEdit= !edited;recipes=await listRecipes();fire(edited,'Edited successfully')" type="button" class="btn btn-success isWorking" style="font-style:normal" data-bs-dismiss="modal"> Edit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script>
+                async function updateRecipe(jsonRecipe, id) {
+                    jsonRecipe = {
+                        'Id': jsonRecipe.Id,
+                        'Title': jsonRecipe.Title,
+                        'Ingredients': jsonRecipe.Ingredients,
+                        'Instructions': jsonRecipe.Instructions,
+                        'Categories': jsonRecipe.Categories
+                    }
+                    let url = '@baseAdress' + 'update-recipe/' + id;
+                    const response = await fetch(url, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            "X-XSRF-TOKEN": window.antiforgery,
+                            'Authorization': 'Bearer ' + window.logged
+                        },
+                        credentials: 'include',
+                        body: JSON.stringify(jsonRecipe)
+                    })
+                        .then(res => { return res })
+                    if (response.ok) {
+                        scroll('recipe');
+                        return true;
+                    }
+                    else
+                        return false;
+                }
+                function adjust(chosenRecipe, editIng, editIns) {
+                    editIng = editIng.trim();
+                    editIns = editIns.trim();
+                    let ing = editIng;
+                    let ins = editIns;
+                    chosenRecipe.Id = chosenRecipe.id;
+                    chosenRecipe.Ingredients = ing.split('\n');
+                    chosenRecipe.Instructions = ins.split('\n');
+                    chosenRecipe.Title = chosenRecipe.title;
+                    chosenRecipe.Categories = chosenRecipe.categories;
+                    chosenRecipe.ingredients = ing.split('\n');
+                    chosenRecipe.instructions = ins.split('\n');
+                    return chosenRecipe;
+                }
+                function adjustEdit(recipe, ing, ins) {
+                    let i;
+                    ing = '';
+                    ins = '';
+                    for (i = 0; i < recipe.ingredients.length; i++) {
+                        recipe.ingredients[i] = recipe.ingredients[i].replaceAll('\n', '');
+                    }
+                    for (i = 0; i < recipe.instructions.length; i++) {
+                        recipe.instructions[i] = recipe.instructions[i].replaceAll('\n', '');
+                    }
+                    for (i = 0; i < recipe.ingredients.length; i++) {
+                        ing = ing + recipe.ingredients[i] + '\n';
+                    }
+                    for (i = 0; i < recipe.instructions.length; i++) {
+                        ins = ins + recipe.instructions[i] + '\n';
+                    }
+                    for (i = 0; i < recipe.ingredients.length; i++) {
+                        recipe.ingredients[i] = recipe.ingredients[i] + '\n';
+                    }
+                    for (i = 0; i < recipe.instructions.length; i++) {
+                        recipe.instructions[i] = recipe.instructions[i] + '\n';
+                    }
+                    return [recipe, ing, ins];
+                }
+            </script>
+        </div>
+    </div>
+</div>
+<script>
+    async function getNewToken(id, user) {
+        rT = await getRefreshToken(user);
+        let url = '@baseAdress' + 'refresh-token/' + id;
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + window.logged,
+                "X-XSRF-TOKEN": window.antiforgery
+            },
+            credentials: 'include',
+            body: JSON.stringify(rT)
+        })
+            .then(res => { return res })
+        if (response.ok) {
+            logged = await response.clone().text();
+            return response.text();
+        }
+        else
+            return false;
+    }
+    async function getToken() {
+        const response = await fetch('@baseAdress' + 'antiforgery', {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + window.logged
+            },
+            credentials: 'include'
+        }).then(res => { return res })
+        if (response.ok) {
+            const xsrfToken = document.cookie
+                .split("; ")
+                .find(row => row.startsWith("XSRF-TOKEN="))
+                .split("=")[1];
+            return xsrfToken;
+        }
+        else {
+            return null;
+        }
+    }
+</script>
