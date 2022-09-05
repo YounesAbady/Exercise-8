@@ -328,16 +328,16 @@
 
         <!--List Categories-->
 
-        <div x-data="{ expandCreate:false, chosenCategory:'', expandDelete:false, expandEdit:false,position:-1,deleted:null,newCategory:'' }" x-show="expandCategory" x-cloak x-transition>
+        <div x-data="{ expandCreate:false, chosenCategory:'', expandDelete:false, expandEdit:false,id:'',deleted:null,newCategory:'' }" x-show="expandCategory" x-cloak x-transition>
             <div class="row row-cols-1 row-cols-md-3 g-2 text-center" id="autoScrollCategories">
                 <template x-for="(category, index) in categories">
                     <div>
                         <div class="col">
                             <div class="card h-100 text-center" style="border:groove;border-color:#66FCF1;background-color:transparent;margin-left:2px;margin-top:50px;">
                                 <div class="card-body">
-                                    <h5 x-text="category" class="card-title" style="color:white"></h5>
-                                    <a x-on:click="chosenCategory= category ;position=index+1;expandDelete=false;expandCreate=false" class="btn btn-dark" style="background-color:#1F2833;color:#C5C6C7;margin-top:10px;" data-bs-toggle="modal" data-bs-target="#editCategory"><i class="bi bi-pencil-square" style="font-style:normal"> Edit</i></a>
-                                    <a x-on:click="chosenCategory= category ;" class="btn btn-danger" style="color:white;margin-top:10px;" data-bs-toggle="modal" data-bs-target="#deleteCategoryModal"><i class="bi bi-trash" style="font-style:normal"> Delete</i></a>
+                                    <h5 x-text="category.data" class="card-title" style="color:white"></h5>
+                                    <a x-on:click="chosenCategory= category.data ;id=category.id;expandDelete=false;expandCreate=false" class="btn btn-dark" style="background-color:#1F2833;color:#C5C6C7;margin-top:10px;" data-bs-toggle="modal" data-bs-target="#editCategory"><i class="bi bi-pencil-square" style="font-style:normal"> Edit</i></a>
+                                    <a x-on:click="id=category.id;" class="btn btn-danger" style="color:white;margin-top:10px;" data-bs-toggle="modal" data-bs-target="#deleteCategoryModal"><i class="bi bi-trash" style="font-style:normal"> Delete</i></a>
                                 </div>
                             </div>
                         </div>
@@ -419,14 +419,14 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button x-on:click="deleted=await deleteCategory(chosenCategory);expandEdit=false;expandCreate=false;fire(deleted,'Deleted Successfully');categories = await listCategories()" type="button" class="btn btn-primary" style="margin-right:125px" data-bs-dismiss="modal">Yes, delete it!</button>
+                            <button x-on:click="deleted=await deleteCategory(id);expandEdit=false;expandCreate=false;fire(deleted,'Deleted Successfully');categories = await listCategories()" type="button" class="btn btn-primary" style="margin-right:125px" data-bs-dismiss="modal">Yes, delete it!</button>
                         </div>
                     </div>
                 </div>
             </div>
 
             <script>
-                async function deleteCategory(category) {
+                async function deleteCategory(id) {
                     let url = '@baseAdress' + 'delete-category';
                     const response = await fetch(url, {
                         method: 'DELETE',
@@ -436,7 +436,7 @@
                             'Authorization': 'Bearer ' + window.logged
                         },
                         credentials: 'include',
-                        body: JSON.stringify(category)
+                        body: JSON.stringify(id)
                     })
                         .then(res => { return res })
                     if (response.ok) {
@@ -470,14 +470,14 @@
                         </div>
                         <div class="modal-footer m-auto">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" x-on:click="edited = await editCategory(position,chosenCategory);expandEdit= !edited;fire(edited,'Edited Successfully');categories = await listCategories();" class="btn btn-success isWorking" style="font-style:normal" data-bs-dismiss="modal"> Edit</button>
+                            <button type="button" x-on:click="edited = await editCategory(id,chosenCategory);expandEdit= !edited;fire(edited,'Edited Successfully');categories = await listCategories();" class="btn btn-success isWorking" style="font-style:normal" data-bs-dismiss="modal"> Edit</button>
                         </div>
                     </div>
                 </div>
             </div>
             <script>
-                async function editCategory(position, newCategory) {
-                    let url = '@baseAdress' + 'update-category/' + position;
+                async function editCategory(id, newCategory) {
+                    let url = '@baseAdress' + 'update-category/' + id;
                     const response = await fetch(url, {
                         method: 'PUT',
                         headers: {
