@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Antiforgery;
+﻿using LLBLGen.Linq.Prefetch;
+using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SD.LLBLGen.Pro.DQE.PostgreSql;
@@ -34,7 +35,86 @@ namespace API.Controllers
                     if (metaData.Recipe.Count() == 0)
                         throw new InvalidOperationException("Cant be empty");
                     else
-                        return Ok(metaData.Recipe.ToList().OrderBy(x => x.Title));
+                    {
+                        List<RecipeEntity> recipes = new List<RecipeEntity>();
+                        foreach (var item in metaData.Recipe)
+                        {
+                            //.Include() didnt work for me :(
+                            foreach (var x in metaData.Ingredient)
+                            {
+                                if (item.Id == x.RecipeId)
+                                    item.Ingredients.Add(x);
+                            }
+                            foreach (var x in metaData.Instruction)
+                            {
+                                if (item.Id == x.RecipeId)
+                                    item.Instructions.Add(x);
+                            }
+                            foreach (var x in metaData.Category)
+                            {
+                                if (item.Id == x.RecipeId)
+                                    item.Categories.Add(x);
+                            }
+                            recipes.Add(item);
+                        }
+                        return Ok(recipes.ToList().OrderBy(x => x.Title));
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("api/add-recipe"), Authorize]
+        public async Task<ActionResult> AddRecipe([FromBody] RecipeEntity recipe)
+        {
+            try
+            {
+                await GlobalAntiforgery.ValidateRequestAsync(HttpContext);
+                RuntimeConfiguration.ConfigureDQE<PostgreSqlDQEConfiguration>(c => c.AddDbProviderFactory(typeof(Npgsql.NpgsqlFactory)));
+                using (var adapter = new DataAccessAdapter(_configuration.GetConnectionString("YumCityDb")))
+                {
+                    var metaData = new LinqMetaData(adapter);
+                    //foreach(var ingredient in recipe.)
+                    //recipe.Ingredients = recipe.Ingredients.Where(r => !string.IsNullOrWhiteSpace(r)).ToList();
+                    //recipe.Instructions = recipe.Instructions.Where(r => !string.IsNullOrWhiteSpace(r)).ToList();
+                    if (recipe.Ingredients.Count == 0 || recipe.Instructions.Count == 0 || recipe.Categories.Count == 0 || string.IsNullOrWhiteSpace(recipe.Title))
+                        return BadRequest("Cant be empty");
+                    else
+                    {
+                        await adapter.SaveEntityAsync(recipe);
+                        return Ok();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpDelete]
+        [Route("api/delete-recipe"), Authorize]
+        public async Task<ActionResult> DeleteRecipe([FromBody] Guid id)
+        {
+            try
+            {
+                await GlobalAntiforgery.ValidateRequestAsync(HttpContext);
+                if (id == Guid.Empty)
+                    throw new InvalidOperationException("Cant be empty");
+                else
+                {
+                    RuntimeConfiguration.ConfigureDQE<PostgreSqlDQEConfiguration>(c => c.AddDbProviderFactory(typeof(Npgsql.NpgsqlFactory)));
+                    using (var adapter = new DataAccessAdapter(_configuration.GetConnectionString("YumCityDb")))
+                    {
+                        var metaData = new LinqMetaData(adapter);
+                        RecipeEntity recipe = metaData.Recipe.FirstOrDefault(x => x.Id == id);
+                        await adapter.DeleteEntityAsync(recipe);
+                        return Ok();
+                    }
                 }
             }
             catch (Exception e)
@@ -87,34 +167,6 @@ namespace API.Controllers
                             Data = category
                         };
                         await adapter.SaveEntityAsync(newCategory);
-                        return Ok();
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
-
-        [HttpPost]
-        [Route("api/add-recipe"), Authorize]
-        public async Task<ActionResult> AddRecipe([FromBody] RecipeEntity recipe)
-        {
-            try
-            {
-                await GlobalAntiforgery.ValidateRequestAsync(HttpContext);
-                RuntimeConfiguration.ConfigureDQE<PostgreSqlDQEConfiguration>(c => c.AddDbProviderFactory(typeof(Npgsql.NpgsqlFactory)));
-                using (var adapter = new DataAccessAdapter(_configuration.GetConnectionString("YumCityDb")))
-                {
-                    var metaData = new LinqMetaData(adapter);
-                    //recipe.Ingredients = recipe.Ingredients.Where(r => !string.IsNullOrWhiteSpace(r)).ToList();
-                    //recipe.Instructions = recipe.Instructions.Where(r => !string.IsNullOrWhiteSpace(r)).ToList();
-                    if (recipe.Ingredients.Count == 0 || recipe.Instructions.Count == 0 || recipe.Categories.Count == 0 || string.IsNullOrWhiteSpace(recipe.Title))
-                        return BadRequest("Cant be empty");
-                    else
-                    {
-                        await adapter.SaveEntityAsync(recipe);
                         return Ok();
                     }
                 }

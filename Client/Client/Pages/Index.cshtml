@@ -511,25 +511,25 @@
                                 <div x-data="{ expanded: false }">
                                     <button x-on:click="expanded = ! expanded" style="background-color:#45A29E;color:black;margin-top:10px;font-style:normal" class="text-center"><i class="bi bi-search" style="font-style:normal"> Show Ingredients</i></button>
                                     <template x-for="ing in recipe.ingredients">
-                                        <p x-text="'- '+ing" x-show="expanded" x-collapse class="card-text text-start" x-transition style="color:white"></p>
+                                        <p x-text="'- '+ing.data" x-show="expanded" x-collapse class="card-text text-start" x-transition style="color:white"></p>
                                     </template>
                                 </div>
                                 <br>
                                 <div x-data="{ expanded: false }">
                                     <button x-on:click="expanded = ! expanded" style="background-color:#45A29E;color:black;margin-top:10px;font-style:normal" class="text-center"><i class="bi bi-search" style="font-style:normal"> Show Instructions</i></button>
                                     <template x-for="ins in recipe.instructions">
-                                        <p x-text="'- '+ins" x-show="expanded" x-collapse class="card-text text-start" x-transition style="color:white"></p>
+                                        <p x-text="'- '+ins.data" x-show="expanded" x-collapse class="card-text text-start" x-transition style="color:white"></p>
                                     </template>
                                 </div>
                                 <br>
                                 <div x-data="{ expanded: false }">
                                     <button x-on:click="expanded = ! expanded" style="background-color:#45A29E;color:black;margin-top:10px;font-style:normal" class="text-center"><i class="bi bi-search" style="font-style:normal"> Show Categories</i></button>
                                     <template x-for="cat in recipe.categories">
-                                        <p x-text="'- '+cat" x-show="expanded" x-collapse class="card-text text-start" x-transition style="color:white"></p>
+                                        <p x-text="'- '+cat.data" x-show="expanded" x-collapse class="card-text text-start" x-transition style="color:white"></p>
                                     </template>
                                 </div>
                                 <br>
-                                <a x-on:click="chosenRecipe.title=recipe.title;chosenRecipe.id=recipe.id;chosenRecipe.ingredients=recipe.ingredients;chosenRecipe.instructions=recipe.instructions;chosenRecipe.categories=recipe.categories;[chosenRecipe,editIngredients,editInstructions]=adjustEdit(chosenRecipe,editIngredients,editInstructions);expandDelete=false;expandCreate=false;toast(expandEdit);categories = await listCategories()" class="btn btn-dark" style="background-color:#1F2833;color:#C5C6C7;margin-top:10px;font-style:normal" data-bs-toggle="modal" data-bs-target="#editRecipe"><i class="bi bi-pencil-square" style="font-style:normal"> Edit</i></a>
+                                <a x-on:click="chosenRecipe = recipe;[chosenRecipe,editIngredients,editInstructions]=adjustEdit(chosenRecipe,editIngredients,editInstructions);expandDelete=false;expandCreate=false;toast(expandEdit);categories = await listCategories()" class="btn btn-dark" style="background-color:#1F2833;color:#C5C6C7;margin-top:10px;font-style:normal" data-bs-toggle="modal" data-bs-target="#editRecipe"><i class="bi bi-pencil-square" style="font-style:normal"> Edit</i></a>
                                 <a x-on:click="deleteId=recipe.id" class="btn btn-danger" style="color:white;margin-top:10px;font-style:normal" data-bs-toggle="modal" data-bs-target="#deleteRecipeModal"><i class="bi bi-trash" style="font-style:normal"> Delete</i></a>
                             </div>
                         </div>
@@ -588,7 +588,7 @@
                                             <br>
                                             <select class="form-control" x-model="chosenRecipe.Categories" multiple style="color:black" required>
                                                 <template x-for="cat in categories">
-                                                    <option x-model="cat" value="cat" x-text="cat"></option>
+                                                    <option x-model="cat.data" value="cat" x-text="cat.data"></option>
                                                 </template>
                                             </select>
                                             <div class="valid-feedback" style="font-size:large">
@@ -650,8 +650,16 @@
                     ins = ins.trim();
                     ing = ing.replaceAll('/', '-');
                     ins = ins.replaceAll('/', '-');
-                    chosenRecipe.Ingredients = ing.split('\n');
-                    chosenRecipe.Instructions = ins.split('\n');
+                    let x = ing.split('\n');
+                    let y = ins.split('\n');
+                    for (i = 0; i < x.length; i++) {
+                        chosenRecipe.ingredients.Add(x[i]);
+                    }
+                    for (i = 0; i < y.length; i++) {
+                        chosenRecipe.ingredients.Add(x[i]);
+                    }
+                    //chosenRecipe.Ingredients =
+                    //chosenRecipe.Instructions =
                     return chosenRecipe;
                 }
                 function clear(chosenRecipe, ing, ins) {
@@ -785,7 +793,7 @@
                                             <br>
                                             <select class="form-control" x-model="chosenRecipe.categories" multiple style="color:black" required>
                                                 <template x-for="cat in categories">
-                                                    <option x-model="cat" value="cat" x-text="cat"></option>
+                                                    <option x-model="cat" value="cat" x-text="cat.data"></option>
                                                 </template>
                                             </select>
                                             <p style="font-weight:bolder">Hold down the Ctrl (windows) or Command (Mac) button to select multiple options.</p>
@@ -855,22 +863,22 @@
                     ing = '';
                     ins = '';
                     for (i = 0; i < recipe.ingredients.length; i++) {
-                        recipe.ingredients[i] = recipe.ingredients[i].replaceAll('\n', '');
+                        recipe.ingredients[i].data = recipe.ingredients[i].data.replaceAll('\n', '');
                     }
                     for (i = 0; i < recipe.instructions.length; i++) {
-                        recipe.instructions[i] = recipe.instructions[i].replaceAll('\n', '');
+                        recipe.instructions[i].data = recipe.instructions[i].data.replaceAll('\n', '');
                     }
                     for (i = 0; i < recipe.ingredients.length; i++) {
-                        ing = ing + recipe.ingredients[i] + '\n';
+                        ing = ing + recipe.ingredients[i].data + '\n';
                     }
                     for (i = 0; i < recipe.instructions.length; i++) {
-                        ins = ins + recipe.instructions[i] + '\n';
+                        ins = ins + recipe.instructions[i].data + '\n';
                     }
                     for (i = 0; i < recipe.ingredients.length; i++) {
-                        recipe.ingredients[i] = recipe.ingredients[i] + '\n';
+                        recipe.ingredients[i].data = recipe.ingredients[i].data + '\n';
                     }
                     for (i = 0; i < recipe.instructions.length; i++) {
-                        recipe.instructions[i] = recipe.instructions[i] + '\n';
+                        recipe.instructions[i].data = recipe.instructions[i].data + '\n';
                     }
                     return [recipe, ing, ins];
                 }

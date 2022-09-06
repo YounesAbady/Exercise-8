@@ -15,7 +15,7 @@ namespace Backend.Migrations
             Create.Table("Ingredient")
                 .WithColumn("Id").AsGuid().NotNullable().PrimaryKey()
                 .WithColumn("Data").AsString().NotNullable()
-                .WithColumn("RecipeId").AsGuid().NotNullable().ForeignKey("Recipe", "Id");
+                .WithColumn("RecipeId").AsGuid().NotNullable().ForeignKey("Recipe", "Id").OnDelete(System.Data.Rule.Cascade);
         }
     }
 }
