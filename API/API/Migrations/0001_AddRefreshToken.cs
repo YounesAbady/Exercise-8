@@ -1,9 +1,9 @@
 ﻿using FluentMigrator;
 
-namespace Backend.Migrations
+namespace API.Migrations
 {
     [Migration(1)]
-    public class AddRefreshTokenTable_1 : Migration
+    public class _0001_AddRefreshToken : Migration
     {
         public override void Down()
         {

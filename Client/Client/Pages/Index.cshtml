@@ -42,6 +42,7 @@
                 <script>
                     var logged;
                     var antiforgery;
+                    var id;
                     function fire(logged, msg) {
                         if (logged) {
                             Swal.fire({
@@ -81,7 +82,7 @@
                         if (response.ok) {
                             logged = await response.clone().text();
                             antiforgery = await getToken();
-                            let id = await getUserId(user);
+                            id = await getUserId(user);
                             setInterval(await getNewToken, 120000, id, user);
                             return response.text();
                         }
@@ -501,7 +502,7 @@
 
         <!--List Recipes-->
 
-        <div x-data="{ expandCreate:false, chosenRecipe:{Title:'', Ingredients:[], Instructions:[], Categories:[]}, expandDelete:false, expandEdit:false, ing:'' , ins:'',editIngredients:'' , editInstructions:'',deleteId:'' }" x-show="expandRecipe" x-cloak x-transition>
+        <div x-data="{ expandCreate:false, chosenRecipe:{Title:'', Ingredients:[], Instructions:[], RecipeCategories:[],UserId:''}, expandDelete:false, expandEdit:false, ing:'' , ins:'',editIngredients:'' , editInstructions:'',deleteId:'' }" x-show="expandRecipe" x-cloak x-transition>
             <div class="row row-cols-1 row-cols-md-4 g-2 m-auto text-center" id="autoScroll">
                 <template x-for="recipe in recipes">
                     <div class="col">
@@ -524,7 +525,7 @@
                                 <br>
                                 <div x-data="{ expanded: false }">
                                     <button x-on:click="expanded = ! expanded" style="background-color:#45A29E;color:black;margin-top:10px;font-style:normal" class="text-center"><i class="bi bi-search" style="font-style:normal"> Show Categories</i></button>
-                                    <template x-for="cat in recipe.categories">
+                                    <template x-for="cat in recipe.recipeCategories">
                                         <p x-text="'- '+cat.data" x-show="expanded" x-collapse class="card-text text-start" x-transition style="color:white"></p>
                                     </template>
                                 </div>
@@ -618,7 +619,8 @@
                         'Title': recipe.Title,
                         'Ingredients': recipe.Ingredients,
                         'Instructions': recipe.Instructions,
-                        'Categories': recipe.Categories
+                        'Categories': recipe.Categories,
+                        'UserId': window.id
                     }
                     let url = '@baseAdress' + 'add-recipe';
                     const response = await fetch(url, {
@@ -650,16 +652,8 @@
                     ins = ins.trim();
                     ing = ing.replaceAll('/', '-');
                     ins = ins.replaceAll('/', '-');
-                    let x = ing.split('\n');
-                    let y = ins.split('\n');
-                    for (i = 0; i < x.length; i++) {
-                        chosenRecipe.ingredients.Add(x[i]);
-                    }
-                    for (i = 0; i < y.length; i++) {
-                        chosenRecipe.ingredients.Add(x[i]);
-                    }
-                    //chosenRecipe.Ingredients =
-                    //chosenRecipe.Instructions =
+                    chosenRecipe.Ingredients = ing.split('\n');
+                    chosenRecipe.Instructions = ins.split('\n');
                     return chosenRecipe;
                 }
                 function clear(chosenRecipe, ing, ins) {
@@ -791,7 +785,7 @@
                                         <form method="post">
                                             <label style="font:bolder;text-align:left" class="fw-bold">Choose one or more category</label>
                                             <br>
-                                            <select class="form-control" x-model="chosenRecipe.categories" multiple style="color:black" required>
+                                            <select class="form-control" x-model="chosenRecipe.recipeCategories" multiple style="color:black" required>
                                                 <template x-for="cat in categories">
                                                     <option x-model="cat" value="cat" x-text="cat.data"></option>
                                                 </template>
@@ -823,7 +817,8 @@
                         'Title': jsonRecipe.Title,
                         'Ingredients': jsonRecipe.Ingredients,
                         'Instructions': jsonRecipe.Instructions,
-                        'Categories': jsonRecipe.Categories
+                        'Categories': jsonRecipe.RecipeCategories,
+                        'UserId': window.id
                     }
                     let url = '@baseAdress' + 'update-recipe/' + id;
                     const response = await fetch(url, {

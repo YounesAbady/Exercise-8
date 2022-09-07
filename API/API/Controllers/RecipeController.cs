@@ -1,12 +1,13 @@
-﻿using LLBLGen.Linq.Prefetch;
+﻿using API.DTO;
+using LLBLGen.Linq.Prefetch;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SD.LLBLGen.Pro.DQE.PostgreSql;
 using SD.LLBLGen.Pro.ORMSupportClasses;
-using YumCity.DatabaseSpecific;
-using YumCity.EntityClasses;
-using YumCity.Linq;
+using YumCity_Migrations.DatabaseSpecific;
+using YumCity_Migrations.EntityClasses;
+using YumCity_Migrations.Linq;
 namespace API.Controllers
 {
     public class RecipeController : Controller
@@ -50,10 +51,10 @@ namespace API.Controllers
                                 if (item.Id == x.RecipeId)
                                     item.Instructions.Add(x);
                             }
-                            foreach (var x in metaData.Category)
+                            foreach (var x in metaData.RecipeCategory)
                             {
                                 if (item.Id == x.RecipeId)
-                                    item.Categories.Add(x);
+                                    item.RecipeCategories.Add(x);
                             }
                             recipes.Add(item);
                         }
@@ -69,24 +70,59 @@ namespace API.Controllers
 
         [HttpPost]
         [Route("api/add-recipe"), Authorize]
-        public async Task<ActionResult> AddRecipe([FromBody] RecipeEntity recipe)
+        public async Task<ActionResult> AddRecipe([FromBody] RecipeDto recipeDto)
         {
             try
             {
                 await GlobalAntiforgery.ValidateRequestAsync(HttpContext);
+                RecipeEntity recipe = Convert(recipeDto);
                 RuntimeConfiguration.ConfigureDQE<PostgreSqlDQEConfiguration>(c => c.AddDbProviderFactory(typeof(Npgsql.NpgsqlFactory)));
                 using (var adapter = new DataAccessAdapter(_configuration.GetConnectionString("YumCityDb")))
                 {
                     var metaData = new LinqMetaData(adapter);
-                    //foreach(var ingredient in recipe.)
-                    //recipe.Ingredients = recipe.Ingredients.Where(r => !string.IsNullOrWhiteSpace(r)).ToList();
-                    //recipe.Instructions = recipe.Instructions.Where(r => !string.IsNullOrWhiteSpace(r)).ToList();
-                    if (recipe.Ingredients.Count == 0 || recipe.Instructions.Count == 0 || recipe.Categories.Count == 0 || string.IsNullOrWhiteSpace(recipe.Title))
+                    if (recipe.Ingredients.Count == 0 || recipe.Instructions.Count == 0 || recipe.RecipeCategories.Count == 0 || string.IsNullOrWhiteSpace(recipe.Title))
                         return BadRequest("Cant be empty");
                     else
                     {
                         await adapter.SaveEntityAsync(recipe);
                         return Ok();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpPut]
+        [Route("api/update-recipe/{id}"), Authorize]
+        public async Task<ActionResult> UpdateRecipe([FromBody] RecipeDto newRecipe, Guid id)
+        {
+            try
+            {
+                await GlobalAntiforgery.ValidateRequestAsync(HttpContext);
+                if (id == Guid.Empty || newRecipe.Ingredients.Count == 0 || newRecipe.Instructions.Count == 0 /*|| newRecipe.Categories.Count == 0 */|| string.IsNullOrWhiteSpace(newRecipe.Title))
+                    throw new InvalidOperationException("Cant be empty");
+                else
+                {
+                    RuntimeConfiguration.ConfigureDQE<PostgreSqlDQEConfiguration>(c => c.AddDbProviderFactory(typeof(Npgsql.NpgsqlFactory)));
+                    using (var adapter = new DataAccessAdapter(_configuration.GetConnectionString("YumCityDb")))
+                    {
+                        var metaData = new LinqMetaData(adapter);
+                        RecipeEntity oldRecipe = metaData.Recipe.FirstOrDefault(x => x.Id == id);
+                        newRecipe.Ingredients = newRecipe.Ingredients.Where(r => !string.IsNullOrWhiteSpace(r)).ToList();
+                        newRecipe.Instructions = newRecipe.Instructions.Where(r => !string.IsNullOrWhiteSpace(r)).ToList();
+                        if (newRecipe.Ingredients.Count == 0 || newRecipe.Instructions.Count == 0 /*|| newRecipe.Categories.Count == 0*/ || string.IsNullOrWhiteSpace(newRecipe.Title))
+                            throw new InvalidOperationException("Cant be empty");
+                        else
+                        {
+                            oldRecipe.Title = newRecipe.Title;
+                            RecipeEntity recipe = Convert(newRecipe);
+                            await adapter.DeleteEntityAsync(oldRecipe);
+                            await adapter.SaveEntityAsync(recipe);
+                            return Ok();
+                        }
                     }
                 }
             }
@@ -134,10 +170,10 @@ namespace API.Controllers
                 using (var adapter = new DataAccessAdapter(_configuration.GetConnectionString("YumCityDb")))
                 {
                     var metaData = new LinqMetaData(adapter);
-                    if (metaData.AllCategory.Count() == 0)
+                    if (metaData.Category.Count() == 0)
                         throw new InvalidOperationException("Cant be empty");
                     else
-                        return Ok(metaData.AllCategory.ToList().OrderBy(x => x.Data));
+                        return Ok(metaData.Category.ToList().OrderBy(x => x.Data));
                 }
             }
             catch (Exception e)
@@ -161,7 +197,14 @@ namespace API.Controllers
                         return BadRequest("Cant be empty");
                     else
                     {
-                        AllCategoryEntity newCategory = new AllCategoryEntity
+                        foreach (var item in metaData.Category)
+                        {
+                            if (item.Data == category)
+                            {
+                                return BadRequest("Category already exists!");
+                            }
+                        }
+                        CategoryEntity newCategory = new CategoryEntity
                         {
                             Id = Guid.NewGuid(),
                             Data = category
@@ -192,18 +235,15 @@ namespace API.Controllers
                         throw new InvalidOperationException("Cant be empty");
                     else
                     {
-                        AllCategoryEntity category = metaData.AllCategory.FirstOrDefault(c => c.Id == id);
-                        CategoryEntity selectedCategory;
-                        await adapter.DeleteEntityAsync(category);
-                        foreach (RecipeEntity recipe in metaData.Recipe)
+                        CategoryEntity category = metaData.Category.FirstOrDefault(c => c.Id == id);
+                        foreach (RecipeCategoryEntity recipeCategory in metaData.RecipeCategory)
                         {
-                            selectedCategory = recipe.Categories.FirstOrDefault(x => x.Id == id);
-                            if (selectedCategory is not null)
+                            if (recipeCategory.Data == category.Data)
                             {
-                                recipe.Categories.Remove(selectedCategory);
-                                await adapter.SaveEntityAsync(recipe);
+                                await adapter.DeleteEntityAsync(recipeCategory);
                             }
                         }
+                        await adapter.DeleteEntityAsync(category);
                         return Ok();
                     }
                 }
@@ -225,19 +265,17 @@ namespace API.Controllers
                 using (var adapter = new DataAccessAdapter(_configuration.GetConnectionString("YumCityDb")))
                 {
                     var metaData = new LinqMetaData(adapter);
-                    AllCategoryEntity category = metaData.AllCategory.FirstOrDefault(c => c.Id == id);
+                    CategoryEntity category = metaData.Category.FirstOrDefault(c => c.Id == id);
                     if (string.IsNullOrEmpty(newCategory))
                         throw new InvalidOperationException("Cant be empty");
                     else
                     {
-                        CategoryEntity selectedCategory;
-                        foreach (RecipeEntity recipe in metaData.Recipe)
+                        foreach (RecipeCategoryEntity recipeCategory in metaData.RecipeCategory)
                         {
-                            selectedCategory = recipe.Categories.FirstOrDefault(x => x.Data == category.Data);
-                            if (selectedCategory is not null)
+                            if (recipeCategory.Data == category.Data)
                             {
-                                recipe.Categories.FirstOrDefault(selectedCategory).Data = newCategory;
-                                await adapter.SaveEntityAsync(recipe);
+                                recipeCategory.Data = newCategory;
+                                await adapter.SaveEntityAsync(recipeCategory);
                             }
                         }
                         category.Data = newCategory;
@@ -259,6 +297,50 @@ namespace API.Controllers
             GlobalAntiforgery = _antiforgery;
             var tokens = GlobalAntiforgery.GetAndStoreTokens(HttpContext);
             HttpContext.Response.Cookies.Append("XSRF-TOKEN", tokens.RequestToken!, new CookieOptions { HttpOnly = false, SameSite = SameSiteMode.None, Secure = true });
+        }
+
+        private RecipeEntity Convert(RecipeDto recipeDto)
+        {
+            RecipeEntity recipe = new();
+            if (string.IsNullOrEmpty(recipeDto.Id.ToString()) || Guid.Equals(recipeDto.Id, Guid.Empty))
+                recipe.Id = Guid.NewGuid();
+            else
+                recipe.Id = recipeDto.Id;
+            recipe.Title = recipeDto.Title;
+            recipeDto.Ingredients = recipeDto.Ingredients.Where(r => !string.IsNullOrWhiteSpace(r)).ToList();
+            recipeDto.Instructions = recipeDto.Instructions.Where(r => !string.IsNullOrWhiteSpace(r)).ToList();
+            foreach (var item in recipeDto.Ingredients)
+            {
+                IngredientEntity ingredient = new()
+                {
+                    Id = Guid.NewGuid(),
+                    Data = item,
+                    RecipeId = recipe.Id
+                };
+                recipe.Ingredients.Add(ingredient);
+            }
+            foreach (var item in recipeDto.Instructions)
+            {
+                InstructionEntity instruction = new()
+                {
+                    Id = Guid.NewGuid(),
+                    Data = item,
+                    RecipeId = recipe.Id
+                };
+                recipe.Instructions.Add(instruction);
+            }
+            foreach (var item in recipeDto.Categories)
+            {
+                RecipeCategoryEntity recipeCategory = new()
+                {
+                    Id = Guid.NewGuid(),
+                    Data = item,
+                    RecipeId = recipe.Id
+                };
+                recipe.RecipeCategories.Add(recipeCategory);
+            }
+            recipe.UserId = recipeDto.UserId;
+            return recipe;
         }
     }
 }

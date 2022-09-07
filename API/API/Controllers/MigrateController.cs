@@ -37,18 +37,12 @@ namespace API.Controllers
                     .AddEnvironmentVariables()
                     .Build();
             return new ServiceCollection()
-                // Add common FluentMigrator services
                 .AddFluentMigratorCore()
                 .ConfigureRunner(rb => rb
-                // Add SQLite support to FluentMigrator
-                .AddPostgres11_0()
-                // Set the connection string
+                .AddPostgres()
                 .WithGlobalConnectionString(config.GetConnectionString("YumCityDb"))
-                // Define the assembly containing the migrations
                 .ScanIn(Assembly.GetExecutingAssembly()).For.All())
-                // Enable logging to console in the FluentMigrator way
                 .AddLogging(lb => lb.AddFluentMigratorConsole())
-                // Build the service provider
                 .BuildServiceProvider(false);
         }
 

@@ -1,9 +1,9 @@
 ﻿using FluentMigrator;
 
-namespace Backend.Migrations
+namespace API.Migrations
 {
     [Migration(6)]
-    public class AddCategoryTable_6 : Migration
+    public class _0006_AddRecipeCategory : Migration
     {
         public override void Down()
         {

@@ -19,8 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="C:\Users\youne\OneDrive\Documents\LLBLGen Pro\v5.9\Projects\Code\DatabaseGeneric\YumCity.csproj" />
-    <ProjectReference Include="C:\Users\youne\OneDrive\Documents\LLBLGen Pro\v5.9\Projects\Code\DatabaseSpecific\YumCityDBSpecific.csproj" />
+    <ProjectReference Include="..\..\LLBLGen Project\Code\DatabaseGeneric\YumCity_Migrations.csproj" />
+    <ProjectReference Include="..\..\LLBLGen Project\Code\DatabaseSpecific\YumCity_MigrationsDBSpecific.csproj" />
   </ItemGroup>
 
 </Project>

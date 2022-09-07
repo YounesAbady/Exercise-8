@@ -12,9 +12,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using YumCity.DatabaseSpecific;
-using YumCity.EntityClasses;
-using YumCity.Linq;
+using YumCity_Migrations.DatabaseSpecific;
+using YumCity_Migrations.EntityClasses;
+using YumCity_Migrations.Linq;
 
 namespace Backend.Controllers
 {

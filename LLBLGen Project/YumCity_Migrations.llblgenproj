@@ -1,0 +1,378 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--LLBLGen Pro v5.9 project file. Do not manually edit this file. Incorrect references could lead to an unloadable project file.-->
+<Project Version="5.9" TargetFrameworkName="LLBLGen Pro Runtime Framework" UseLegacyDefaults="false">
+  <Properties>
+    <Abbreviations />
+    <Property Name="AdditionalTaskPerformerFolder" Value="" />
+    <Property Name="AdditionalTasksFolder" Value="" />
+    <Property Name="AdditionalTemplatesFolder" Value="" />
+    <Property Name="AdditionalTypeConverterFolder" Value="" />
+    <Property Name="AddNewElementsAfterRefresh_v5" Value="false" />
+    <Property Name="AddNewElementsAfterRelationalModelDataSync_v5" Value="false" />
+    <Property Name="AddNewFieldsAfterRefresh_v5" Value="true" />
+    <Property Name="AddNewFieldsAfterRelationalModelDataSync_v5" Value="true" />
+    <Property Name="AddNewViewsAsEntitiesAfterRefresh_v5" Value="false" />
+    <Property Name="AddNewViewsAsEntitiesAfterRelationalModelDataSync_v5" Value="false" />
+    <Property Name="AutoAddManyToManyRelationships" Value="false" />
+    <Property Name="AutoAssignSequencesToIntegerPks" Value="true" />
+    <Property Name="AutoAssignTypeConverterToFieldMapping" Value="true" />
+    <Property Name="AutomaticallyGenerateSourceCodeOnProjectSave" Value="false" />
+    <Property Name="ConnectionStringKeyNamePattern" Value="ConnectionString.{$ProviderName}" />
+    <Property Name="DefaultDDLSQLScriptDestinationFolder" Value=".\DDLSQLScripts" />
+    <Property Name="DefaultDeleteRuleAction" Value="1" />
+    <Property Name="DefaultSourceCodeDestinationFolder" Value=".\Code" />
+    <Property Name="DefaultUpdateRuleAction" Value="0" />
+    <Property Name="DeleteObsoleteFiles" Value="true" />
+    <Property Name="ElementNamePrefixPattern" Value="{$SchemaName}" />
+    <Property Name="ElementNamePrefixPatternIsAppliedWhen" Value="1" />
+    <Property Name="EncodingToUse" Value="0" />
+    <Property Name="EntityActionCombinationDefaultForTable" Value="0" />
+    <Property Name="EntityActionCombinationDefaultForView" Value="4" />
+    <Property Name="EntityFieldNameStripPattern" Value="{}{}" />
+    <Property Name="EntityNameStripPattern" Value="{tbl_}{}" />
+    <Property Name="ExcludableOrphanedElementDetectedAction" Value="3" />
+    <Property Name="FailCodeGenerationOnWriteError" Value="false" />
+    <Property Name="FieldMappedOntoRelatedFieldPattern" Value="{$RelatedFieldName}" />
+    <Property Name="FkFieldsAreNamedAfterTargetField" Value="true" />
+    <Property Name="ForeignKeyConstraintPattern" Value="FK_{$Guid}" />
+    <Property Name="ForeignKeyFieldPattern" Value="{$NavigatorName}{$RelatedFieldName}" />
+    <Property Name="GroupUsage" Value="0" />
+    <Property Name="IdentifyingFieldsFollowDBPrimaryKeyConstraints_v5" Value="true" />
+    <Property Name="InsertUnderscoreAtWordBreakCaseInsensitiveDBs" Value="false" />
+    <Property Name="InsertUnderscoreAtWordBreakCaseSensitiveDBs" Value="false" />
+    <Property Name="LengthPrecisionScaleFollowDBLengthPrecisionScale_v5" Value="true" />
+    <Property Name="MakeElementNamePascalCasing" Value="true" />
+    <Property Name="NavigatorMappedOntoManyToManyPattern" Value="{$EndEntityName}CollectionVia{$IntermediateEntityName$S}" />
+    <Property Name="NavigatorMappedOntoOneManyToOnePattern" Value="{$EndEntityName$S}" />
+    <Property Name="NavigatorMappedOntoOneToManyPattern" Value="{$EndEntityName$P}" />
+    <Property Name="NonExcludableOrphanedElementDetectedAction" Value="3" />
+    <Property Name="PreferDecimalOverCurrencyTypes" Value="true" />
+    <Property Name="PreferNaturalCharacterTypes" Value="true" />
+    <Property Name="PreferSystemSequencesOverSchemaSequencesIfApplicable" Value="true" />
+    <Property Name="PreferVariableLengthTypes" Value="true" />
+    <Property Name="PrimaryKeyConstraintPattern" Value="PK_{$Guid}" />
+    <Property Name="ProjectCreator" Value="Abady" />
+    <Property Name="ProjectName" Value="YumCity_Migrations" />
+    <Property Name="ReflectNullabilityOfElementFieldInTargetField_v5" Value="false" />
+    <Property Name="ReflectTypeOfElementFieldInTargetField_v5" Value="true" />
+    <Property Name="RelationalModelDataElementNameCasingCaseInsensitiveDBs" Value="3" />
+    <Property Name="RelationalModelDataElementNameCasingCaseSensitiveDBs" Value="3" />
+    <Property Name="RelationshipsFollowDBForeignKeyConstraints_v5" Value="true" />
+    <Property Name="RemoveUnderscoresFromElementName" Value="true" />
+    <Property Name="RemoveUnmappedElementsAfterRefresh_v5" Value="false" />
+    <Property Name="RemoveUnmappedElementsAfterRelationalModelDataSync_v5" Value="false" />
+    <Property Name="ResetFieldOrderBasedOnTargetOrderAtRefresh" Value="false" />
+    <Property Name="ResetFieldOrderBasedOnTargetOrderAtRelationalModelDataSync" Value="false" />
+    <Property Name="RetrieveDBCustomProperties" Value="false" />
+    <Property Name="RootNamespace" Value="" />
+    <Property Name="SequenceNameMatchingPattern" Value="SEQ_{$TableName}" />
+    <Property Name="SequencePattern" Value="SEQ_{$EntityName}" />
+    <Property Name="SetGroupNameAfterSchemaName" Value="true" />
+    <Property Name="SetSchemaNameAfterGroupName" Value="true" />
+    <Property Name="SingularizeElementNames" Value="true" />
+    <Property Name="StoredProcNameStripPattern" Value="{pr_, sp_}{}" />
+    <Property Name="StoreTimeLastGeneratedIntoProject" Value="false" />
+    <Property Name="StoreTimeLastSyncIntoProject" Value="true" />
+    <Property Name="SyncCustomFieldOrderingWithTableFieldIndex" Value="false" />
+    <Property Name="SyncMappedElementNamesAfterRefresh_v5" Value="false" />
+    <Property Name="SyncMappedElementNamesAfterRelationalModelDataSync_v5" Value="false" />
+    <Property Name="SyncRelationalModelDataElementNameWithModelElementName_v5" Value="false" />
+    <Property Name="SyncRenamedMappedElementNamesAfterRefresh_v5" Value="false" />
+    <Property Name="SyncRenamedMappedElementNamesAfterRelationalModelDataSync_v5" Value="false" />
+    <Property Name="TableValuedFunctionNameStripPattern" Value="{fn_, pr_, sp_}{}" />
+    <Property Name="TargetPerEntityEdgesRequireBackingFkConstraint" Value="true" />
+    <Property Name="TypedViewFieldNameStripPattern" Value="{}{}" />
+    <Property Name="TypedViewMappedOnResultsetPattern" Value="{$ProcFunctionName}{$ResultsetName}Result" />
+    <Property Name="TypedViewNameStripPattern" Value="{vw_}{}" />
+    <Property Name="UniqueConstraintPattern" Value="UC_{$Guid}" />
+    <Property Name="UniqueConstraintsFollowDBUniqueConstraints_v5" Value="true" />
+    <Property Name="UpdateCustomPropertiesAfterRefresh_v5" Value="false" />
+    <Property Name="UpdateCustomPropertiesAfterRelationalModelDataSync_v5" Value="false" />
+    <Property Name="UseCustomFieldOrderingOnNewElements" Value="false" />
+  </Properties>
+  <TypeShortcuts />
+  <IgnoredWarnings />
+  <SavedSearchQueries />
+  <CodeGenerationCyclePreferences>
+    <OutputType Value="3">
+      <LastUsedPreferences>
+        <DestinationRootFolder Value=".\Code" />
+        <FrameworkName Value="LLBLGen Pro Runtime Framework" />
+        <LanguageName Value="C#" />
+        <PlatformName Value=".NET Standard 2.0" />
+        <PresetName Value="SD.Presets.Adapter.General.Netstandard" />
+        <RootNamespace Value="YumCity_Migrations" />
+        <TemplateGroup Value="Adapter" />
+        <TemplateBindings>
+          <Binding Name="SD.TemplateBindings.PostgreSqlSpecific" />
+          <Binding Name="SD.TemplateBindings.SharedTemplates.Netstandard20" />
+          <Binding Name="SD.TemplateBindings.SharedTemplates" />
+          <Binding Name="SD.TemplateBindings.General" />
+        </TemplateBindings>
+        <AdhocTemplateSets />
+      </LastUsedPreferences>
+    </OutputType>
+  </CodeGenerationCyclePreferences>
+  <CodeGenerationMetaDataDefaults>
+    <TargetElement Type="256">
+      <Defaults>
+        <Attributes>
+          <Attribute Value="Browsable($false)" />
+        </Attributes>
+      </Defaults>
+    </TargetElement>
+  </CodeGenerationMetaDataDefaults>
+  <EntityModel>
+    <ValueTypeDefinitions />
+    <EntityDefinitions>
+      <EntityDefinition Name="Category" ObjectID="95b95cf3-74f8-47be-8b24-7688510256d0">
+        <Fields>
+          <Field Name="Data" Type="string" MaxLength="1073741824" />
+          <Field Name="Id" Type="guid" IsPrimaryKey="true" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="Ingredient" ObjectID="30874bb3-6120-48d1-9e01-4f6a75544be9">
+        <Fields>
+          <Field Name="Data" Type="string" MaxLength="1073741824" />
+          <Field Name="Id" Type="guid" IsPrimaryKey="true" />
+          <Field Name="RecipeId" Type="guid" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="Instruction" ObjectID="cd7978ac-f2e2-4924-a65f-733e8811b282">
+        <Fields>
+          <Field Name="Data" Type="string" MaxLength="1073741824" />
+          <Field Name="Id" Type="guid" IsPrimaryKey="true" />
+          <Field Name="RecipeId" Type="guid" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="Recipe" ObjectID="a50e7aef-e6de-4658-915f-10f951d5b266">
+        <Fields>
+          <Field Name="Id" Type="guid" IsPrimaryKey="true" />
+          <Field Name="Title" Type="string" MaxLength="1073741824" />
+          <Field Name="UserId" Type="guid" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="RecipeCategory" ObjectID="2587b103-189b-4f6a-ac82-cfe5f60b8abe">
+        <Fields>
+          <Field Name="Data" Type="string" MaxLength="1073741824" />
+          <Field Name="Id" Type="guid" IsPrimaryKey="true" />
+          <Field Name="RecipeId" Type="guid" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="RefreshToken" ObjectID="d95eab90-11c2-4edc-a602-682b8a2f3d0c">
+        <Fields>
+          <Field Name="Id" Type="guid" IsPrimaryKey="true" />
+          <Field Name="TimeCreated" Type="datetime" />
+          <Field Name="TimeExpires" Type="datetime" />
+          <Field Name="Token" Type="string" MaxLength="1073741824" />
+        </Fields>
+      </EntityDefinition>
+      <EntityDefinition Name="User" ObjectID="cceaba8a-8871-46eb-a1f3-f77b9b6eac64">
+        <Fields>
+          <Field Name="Id" Type="guid" IsPrimaryKey="true" />
+          <Field Name="Name" Type="string" MaxLength="1073741824" />
+          <Field Name="PasswordHash" Type="string" MaxLength="1073741824" />
+          <Field Name="RefreshTokenId" Type="guid" IsOptional="true" />
+        </Fields>
+      </EntityDefinition>
+    </EntityDefinitions>
+    <Relationships>
+      <NormalRelationship Name="Ingredient.Recipe-Recipe.Ingredients" Start=":Ingredient" End=":Recipe" StartNavigator="Recipe" EndNavigator="Ingredients" Type="4" DeleteRuleAction="1">
+        <FieldRelationships>
+          <FieldFieldRelationship FkField="RecipeId" PkField="Id" />
+        </FieldRelationships>
+      </NormalRelationship>
+      <NormalRelationship Name="Instruction.Recipe-Recipe.Instructions" Start=":Instruction" End=":Recipe" StartNavigator="Recipe" EndNavigator="Instructions" Type="4" DeleteRuleAction="1">
+        <FieldRelationships>
+          <FieldFieldRelationship FkField="RecipeId" PkField="Id" />
+        </FieldRelationships>
+      </NormalRelationship>
+      <NormalRelationship Name="Recipe.User-User.Recipes" Start=":Recipe" End=":User" StartNavigator="User" EndNavigator="Recipes" Type="4">
+        <FieldRelationships>
+          <FieldFieldRelationship FkField="UserId" PkField="Id" />
+        </FieldRelationships>
+      </NormalRelationship>
+      <NormalRelationship Name="RecipeCategory.Recipe-Recipe.RecipeCategories" Start=":RecipeCategory" End=":Recipe" StartNavigator="Recipe" EndNavigator="RecipeCategories" Type="4" DeleteRuleAction="1">
+        <FieldRelationships>
+          <FieldFieldRelationship FkField="RecipeId" PkField="Id" />
+        </FieldRelationships>
+      </NormalRelationship>
+      <NormalRelationship Name="User.RefreshToken-RefreshToken.Users" Start=":User" End=":RefreshToken" StartNavigator="RefreshToken" EndNavigator="Users" Type="4" EndIsOptional="true">
+        <FieldRelationships>
+          <FieldFieldRelationship FkField="RefreshTokenId" PkField="Id" />
+        </FieldRelationships>
+      </NormalRelationship>
+    </Relationships>
+    <InheritanceHierarchies />
+  </EntityModel>
+  <TargetDatabases>
+    <TargetDatabase Type="88EBFD8C-CBDD-4452-88AF-1C99E41A123F" SyncSource="2">
+      <ConnectionElements>
+        <ConnectionElement Name="ServerName" Value="localhost" />
+        <ConnectionElement Name="CatalogName" Value="YumCity" />
+        <ConnectionElement Name="UserID" Value="postgres" />
+        <ConnectionElement Name="Password" Value="" />
+        <ConnectionElement Name="PortNumber" Value="5432" />
+        <ConnectionElement Name="SslMode" Value="Disable" />
+      </ConnectionElements>
+      <SystemSequences>
+        <Sequence Name="SystemIdentity" />
+      </SystemSequences>
+      <Catalogs>
+        <Catalog Name="YumCity" SyncSource="2">
+          <Schemas>
+            <Schema Name="public" SyncSource="2" LastSyncWithDatabase="2022-09-07T11:40:10.8565623Z">
+              <Tables>
+                <Table Name="Category">
+                  <PkConstraintName Name="PK_Category" />
+                  <Fields>
+                    <Field Name="Id" Ordinal="1" IsPrimaryKey="true" DbType="28" />
+                    <Field Name="Data" Ordinal="2" DbType="19" Length="1073741824" />
+                  </Fields>
+                </Table>
+                <Table Name="Ingredient">
+                  <PkConstraintName Name="PK_Ingredient" />
+                  <Fields>
+                    <Field Name="Id" Ordinal="1" IsPrimaryKey="true" DbType="28" />
+                    <Field Name="Data" Ordinal="2" DbType="19" Length="1073741824" />
+                    <Field Name="RecipeId" Ordinal="3" DbType="28" />
+                  </Fields>
+                </Table>
+                <Table Name="Instruction">
+                  <PkConstraintName Name="PK_Instruction" />
+                  <Fields>
+                    <Field Name="Id" Ordinal="1" IsPrimaryKey="true" DbType="28" />
+                    <Field Name="Data" Ordinal="2" DbType="19" Length="1073741824" />
+                    <Field Name="RecipeId" Ordinal="3" DbType="28" />
+                  </Fields>
+                </Table>
+                <Table Name="Recipe">
+                  <PkConstraintName Name="PK_Recipe" />
+                  <Fields>
+                    <Field Name="Id" Ordinal="1" IsPrimaryKey="true" DbType="28" />
+                    <Field Name="Title" Ordinal="2" DbType="19" Length="1073741824" />
+                    <Field Name="UserId" Ordinal="3" DbType="28" />
+                  </Fields>
+                </Table>
+                <Table Name="RecipeCategory">
+                  <PkConstraintName Name="PK_RecipeCategory" />
+                  <Fields>
+                    <Field Name="Id" Ordinal="1" IsPrimaryKey="true" DbType="28" />
+                    <Field Name="Data" Ordinal="2" DbType="19" Length="1073741824" />
+                    <Field Name="RecipeId" Ordinal="3" DbType="28" />
+                  </Fields>
+                </Table>
+                <Table Name="RefreshToken">
+                  <PkConstraintName Name="PK_RefreshToken" />
+                  <Fields>
+                    <Field Name="Id" Ordinal="1" IsPrimaryKey="true" DbType="28" />
+                    <Field Name="Token" Ordinal="2" DbType="19" Length="1073741824" />
+                    <Field Name="TimeCreated" Ordinal="3" DbType="22" />
+                    <Field Name="TimeExpires" Ordinal="4" DbType="22" />
+                  </Fields>
+                </Table>
+                <Table Name="User">
+                  <PkConstraintName Name="PK_User" />
+                  <Fields>
+                    <Field Name="Id" Ordinal="1" IsPrimaryKey="true" DbType="28" />
+                    <Field Name="Name" Ordinal="2" DbType="19" Length="1073741824" />
+                    <Field Name="PasswordHash" Ordinal="3" DbType="19" Length="1073741824" />
+                    <Field Name="RefreshTokenId" Ordinal="4" IsOptional="true" DbType="28" />
+                  </Fields>
+                </Table>
+              </Tables>
+            </Schema>
+          </Schemas>
+          <ForeignKeyConstraints>
+            <ForeignKeyConstraint Name="public:Ingredient:FK_Ingredient_RecipeId_Recipe_Id" DeleteRuleAction="1">
+              <FieldPairs>
+                <FieldPair PkField="public:Recipe:Id" FkField="public:Ingredient:RecipeId" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="public:Instruction:FK_Instruction_RecipeId_Recipe_Id" DeleteRuleAction="1">
+              <FieldPairs>
+                <FieldPair PkField="public:Recipe:Id" FkField="public:Instruction:RecipeId" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="public:Recipe:FK_Recipe_UserId_User_Id">
+              <FieldPairs>
+                <FieldPair PkField="public:User:Id" FkField="public:Recipe:UserId" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="public:RecipeCategory:FK_RecipeCategory_RecipeId_Recipe_Id" DeleteRuleAction="1">
+              <FieldPairs>
+                <FieldPair PkField="public:Recipe:Id" FkField="public:RecipeCategory:RecipeId" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+            <ForeignKeyConstraint Name="public:User:FK_User_RefreshTokenId_RefreshToken_Id">
+              <FieldPairs>
+                <FieldPair PkField="public:RefreshToken:Id" FkField="public:User:RefreshTokenId" />
+              </FieldPairs>
+            </ForeignKeyConstraint>
+          </ForeignKeyConstraints>
+        </Catalog>
+      </Catalogs>
+    </TargetDatabase>
+  </TargetDatabases>
+  <MappingStores>
+    <MappingStore Type="88EBFD8C-CBDD-4452-88AF-1C99E41A123F">
+      <EntityMappings>
+        <EntityMapping EntityName=":Category" TargetName="YumCity:public:Category">
+          <FieldMappings>
+            <FieldMapping FieldName="Data" TargetFieldName="Data" />
+            <FieldMapping FieldName="Id" TargetFieldName="Id" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":Ingredient" TargetName="YumCity:public:Ingredient">
+          <FieldMappings>
+            <FieldMapping FieldName="Data" TargetFieldName="Data" />
+            <FieldMapping FieldName="Id" TargetFieldName="Id" />
+            <FieldMapping FieldName="RecipeId" TargetFieldName="RecipeId" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":Instruction" TargetName="YumCity:public:Instruction">
+          <FieldMappings>
+            <FieldMapping FieldName="Data" TargetFieldName="Data" />
+            <FieldMapping FieldName="Id" TargetFieldName="Id" />
+            <FieldMapping FieldName="RecipeId" TargetFieldName="RecipeId" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":Recipe" TargetName="YumCity:public:Recipe">
+          <FieldMappings>
+            <FieldMapping FieldName="Id" TargetFieldName="Id" />
+            <FieldMapping FieldName="Title" TargetFieldName="Title" />
+            <FieldMapping FieldName="UserId" TargetFieldName="UserId" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":RecipeCategory" TargetName="YumCity:public:RecipeCategory">
+          <FieldMappings>
+            <FieldMapping FieldName="Data" TargetFieldName="Data" />
+            <FieldMapping FieldName="Id" TargetFieldName="Id" />
+            <FieldMapping FieldName="RecipeId" TargetFieldName="RecipeId" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":RefreshToken" TargetName="YumCity:public:RefreshToken">
+          <FieldMappings>
+            <FieldMapping FieldName="Id" TargetFieldName="Id" />
+            <FieldMapping FieldName="TimeCreated" TargetFieldName="TimeCreated" />
+            <FieldMapping FieldName="TimeExpires" TargetFieldName="TimeExpires" />
+            <FieldMapping FieldName="Token" TargetFieldName="Token" />
+          </FieldMappings>
+        </EntityMapping>
+        <EntityMapping EntityName=":User" TargetName="YumCity:public:User">
+          <FieldMappings>
+            <FieldMapping FieldName="Id" TargetFieldName="Id" />
+            <FieldMapping FieldName="Name" TargetFieldName="Name" />
+            <FieldMapping FieldName="PasswordHash" TargetFieldName="PasswordHash" />
+            <FieldMapping FieldName="RefreshTokenId" TargetFieldName="RefreshTokenId" />
+          </FieldMappings>
+        </EntityMapping>
+      </EntityMappings>
+      <TypedViewMappings />
+      <SPCallMappings />
+      <TvfCallMappings />
+      <TypeConversionDefinitions />
+    </MappingStore>
+  </MappingStores>
+  <ModelViews />
+</Project>
