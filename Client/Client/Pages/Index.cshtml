@@ -502,7 +502,7 @@
 
         <!--List Recipes-->
 
-        <div x-data="{ expandCreate:false, chosenRecipe:{Title:'', Ingredients:[], Instructions:[], RecipeCategories:[],UserId:''}, expandDelete:false, expandEdit:false, ing:'' , ins:'',editIngredients:'' , editInstructions:'',deleteId:'' }" x-show="expandRecipe" x-cloak x-transition>
+        <div x-data="{ expandCreate:false, chosenRecipe:{Title:'', Ingredients:[], Instructions:[], RecipeCategories:[],UserId:''}, expandDelete:false, expandEdit:false, ing:'' , ins:'',editIngredients:'' , editInstructions:'',deleteId:'',chosnenRecipeCategories:[] }" x-show="expandRecipe" x-cloak x-transition>
             <div class="row row-cols-1 row-cols-md-4 g-2 m-auto text-center" id="autoScroll">
                 <template x-for="recipe in recipes">
                     <div class="col">
@@ -530,7 +530,7 @@
                                     </template>
                                 </div>
                                 <br>
-                                <a x-on:click="chosenRecipe = recipe;[chosenRecipe,editIngredients,editInstructions]=adjustEdit(chosenRecipe,editIngredients,editInstructions);expandDelete=false;expandCreate=false;toast(expandEdit);categories = await listCategories()" class="btn btn-dark" style="background-color:#1F2833;color:#C5C6C7;margin-top:10px;font-style:normal" data-bs-toggle="modal" data-bs-target="#editRecipe"><i class="bi bi-pencil-square" style="font-style:normal"> Edit</i></a>
+                                <a x-on:click="chosenRecipe = recipe;[chosenRecipe,editIngredients,editInstructions]=adjustEdit(chosenRecipe,editIngredients,editInstructions);expandDelete=false;expandCreate=false;toast(expandEdit);categories = await listCategories();chosnenRecipeCategories=convertCategories(chosnenRecipeCategories,recipe.recipeCategories)" class="btn btn-dark" style="background-color:#1F2833;color:#C5C6C7;margin-top:10px;font-style:normal" data-bs-toggle="modal" data-bs-target="#editRecipe"><i class="bi bi-pencil-square" style="font-style:normal"> Edit</i></a>
                                 <a x-on:click="deleteId=recipe.id" class="btn btn-danger" style="color:white;margin-top:10px;font-style:normal" data-bs-toggle="modal" data-bs-target="#deleteRecipeModal"><i class="bi bi-trash" style="font-style:normal"> Delete</i></a>
                             </div>
                         </div>
@@ -540,6 +540,16 @@
             <div class="text-center m-4">
                 <button x-on:click="expandDelete=false;expandEdit=false;categories = await listCategories();[chosenRecipe,ing,ins]=clear(chosenRecipe,ing,ins)" style="background-color:#252f3e;color:white;" class="btn" data-bs-toggle="modal" data-bs-target="#createRecipe"><i class="bi bi-plus-circle" style="font-style:normal"> Create Recipe</i></button>
             </div>
+
+            <script>
+                function convertCategories(categories, recipeCategories) {
+                    categories = [];
+                    for (let i = 0; i < recipeCategories.length; i++) {
+                        categories.push(recipeCategories[i].data);
+                    }
+                    return categories;
+                }
+            </script>
 
             <!--Create Recipe-->
 
@@ -785,9 +795,9 @@
                                         <form method="post">
                                             <label style="font:bolder;text-align:left" class="fw-bold">Choose one or more category</label>
                                             <br>
-                                            <select class="form-control" x-model="chosenRecipe.recipeCategories" multiple style="color:black" required>
+                                            <select class="form-control" x-model="chosnenRecipeCategories" multiple style="color:black" required>
                                                 <template x-for="cat in categories">
-                                                    <option x-model="cat" value="cat" x-text="cat.data"></option>
+                                                    <option x-model="cat.data" value="cat" x-text="cat.data"></option>
                                                 </template>
                                             </select>
                                             <p style="font-weight:bolder">Hold down the Ctrl (windows) or Command (Mac) button to select multiple options.</p>
@@ -805,19 +815,19 @@
                         </div>
                         <div class="modal-footer m-auto">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button x-on:click="chosenRecipe=adjust(chosenRecipe,editIngredients,editInstructions);edited=await updateRecipe(chosenRecipe,chosenRecipe.id);expandEdit= !edited;recipes=await listRecipes();fire(edited,'Edited successfully')" type="button" class="btn btn-success isWorking" style="font-style:normal" data-bs-dismiss="modal"> Edit</button>
+                            <button x-on:click="chosenRecipe=adjust(chosenRecipe,editIngredients,editInstructions);edited=await updateRecipe(chosenRecipe,chosenRecipe.id,chosnenRecipeCategories);expandEdit= !edited;recipes=await listRecipes();fire(edited,'Edited successfully')" type="button" class="btn btn-success isWorking" style="font-style:normal" data-bs-dismiss="modal"> Edit</button>
                         </div>
                     </div>
                 </div>
             </div>
             <script>
-                async function updateRecipe(jsonRecipe, id) {
+                async function updateRecipe(jsonRecipe, id,chosnenRecipeCategories) {
                     jsonRecipe = {
                         'Id': jsonRecipe.Id,
                         'Title': jsonRecipe.Title,
                         'Ingredients': jsonRecipe.Ingredients,
                         'Instructions': jsonRecipe.Instructions,
-                        'Categories': jsonRecipe.RecipeCategories,
+                        'Categories': chosnenRecipeCategories,
                         'UserId': window.id
                     }
                     let url = '@baseAdress' + 'update-recipe/' + id;

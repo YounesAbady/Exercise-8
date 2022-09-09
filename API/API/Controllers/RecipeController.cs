@@ -102,7 +102,7 @@ namespace API.Controllers
             try
             {
                 await GlobalAntiforgery.ValidateRequestAsync(HttpContext);
-                if (id == Guid.Empty || newRecipe.Ingredients.Count == 0 || newRecipe.Instructions.Count == 0 /*|| newRecipe.Categories.Count == 0 */|| string.IsNullOrWhiteSpace(newRecipe.Title))
+                if (id == Guid.Empty || newRecipe.Ingredients.Count == 0 || newRecipe.Instructions.Count == 0 || newRecipe.Categories.Count == 0 || string.IsNullOrWhiteSpace(newRecipe.Title))
                     throw new InvalidOperationException("Cant be empty");
                 else
                 {
@@ -113,7 +113,7 @@ namespace API.Controllers
                         RecipeEntity oldRecipe = metaData.Recipe.FirstOrDefault(x => x.Id == id);
                         newRecipe.Ingredients = newRecipe.Ingredients.Where(r => !string.IsNullOrWhiteSpace(r)).ToList();
                         newRecipe.Instructions = newRecipe.Instructions.Where(r => !string.IsNullOrWhiteSpace(r)).ToList();
-                        if (newRecipe.Ingredients.Count == 0 || newRecipe.Instructions.Count == 0 /*|| newRecipe.Categories.Count == 0*/ || string.IsNullOrWhiteSpace(newRecipe.Title))
+                        if (newRecipe.Ingredients.Count == 0 || newRecipe.Instructions.Count == 0 || newRecipe.Categories.Count == 0 || string.IsNullOrWhiteSpace(newRecipe.Title))
                             throw new InvalidOperationException("Cant be empty");
                         else
                         {
