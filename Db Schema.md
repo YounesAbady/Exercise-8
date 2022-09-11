@@ -58,4 +58,4 @@ Relationships:
 | One to Many | Recipe to Ingredient |
 | One to Many | Recipe to RecipeCategory |
 | One to Many | User to Recipe |
-| One to Many | User to RefreshToken |
+| One to One | User to RefreshToken |
