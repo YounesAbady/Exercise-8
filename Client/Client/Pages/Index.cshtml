@@ -502,7 +502,7 @@
 
         <!--List Recipes-->
 
-        <div x-data="{ expandCreate:false, chosenRecipe:{Title:'', Ingredients:[], Instructions:[], RecipeCategories:[],UserId:''}, expandDelete:false, expandEdit:false, ing:'' , ins:'',editIngredients:'' , editInstructions:'',deleteId:'',chosnenRecipeCategories:[] }" x-show="expandRecipe" x-cloak x-transition>
+        <div x-data="{ expandCreate:false, chosenRecipe:{Title:'', Ingredients:{}, Instructions:[], RecipeCategories:[],UserId:''}, expandDelete:false, expandEdit:false, ing:'' , ins:'',editIngredients:'' , editInstructions:'',deleteId:'',chosnenRecipeCategories:[], title:'' }" x-show="expandRecipe" x-cloak x-transition>
             <div class="row row-cols-1 row-cols-md-4 g-2 m-auto text-center" id="autoScroll">
                 <template x-for="recipe in recipes">
                     <div class="col">
@@ -530,7 +530,7 @@
                                     </template>
                                 </div>
                                 <br>
-                                <a x-on:click="chosenRecipe = recipe;[chosenRecipe,editIngredients,editInstructions]=adjustEdit(chosenRecipe,editIngredients,editInstructions);expandDelete=false;expandCreate=false;toast(expandEdit);categories = await listCategories();chosnenRecipeCategories=convertCategories(chosnenRecipeCategories,recipe.recipeCategories)" class="btn btn-dark" style="background-color:#1F2833;color:#C5C6C7;margin-top:10px;font-style:normal" data-bs-toggle="modal" data-bs-target="#editRecipe"><i class="bi bi-pencil-square" style="font-style:normal"> Edit</i></a>
+                                <a x-on:click="chosenRecipe = recipe;title=recipe.title;[chosenRecipe,editIngredients,editInstructions]=adjustEdit(chosenRecipe,editIngredients,editInstructions);expandDelete=false;expandCreate=false;toast(expandEdit);categories = await listCategories();chosnenRecipeCategories=convertCategories(chosnenRecipeCategories,recipe.recipeCategories)" class="btn btn-dark" style="background-color:#1F2833;color:#C5C6C7;margin-top:10px;font-style:normal" data-bs-toggle="modal" data-bs-target="#editRecipe"><i class="bi bi-pencil-square" style="font-style:normal"> Edit</i></a>
                                 <a x-on:click="deleteId=recipe.id" class="btn btn-danger" style="color:white;margin-top:10px;font-style:normal" data-bs-toggle="modal" data-bs-target="#deleteRecipeModal"><i class="bi bi-trash" style="font-style:normal"> Delete</i></a>
                             </div>
                         </div>
@@ -548,6 +548,10 @@
                         categories.push(recipeCategories[i].data);
                     }
                     return categories;
+                }
+                function getRecipe(recipe) {
+                    let x = recipe;
+                    return x;
                 }
             </script>
 
@@ -763,7 +767,7 @@
                                 <div>
                                     <div class="row mt-4 col-11 m-auto">
                                         <label style="text-align:left">Recipe Title</label>
-                                        <input x-model="chosenRecipe.title" class="form-control" required>
+                                        <input x-model="title" class="form-control" required>
                                         <div class="valid-feedback" style="font-size:large">
                                             Looks good!
                                         </div>
@@ -815,13 +819,13 @@
                         </div>
                         <div class="modal-footer m-auto">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button x-on:click="chosenRecipe=adjust(chosenRecipe,editIngredients,editInstructions);edited=await updateRecipe(chosenRecipe,chosenRecipe.id,chosnenRecipeCategories);expandEdit= !edited;recipes=await listRecipes();fire(edited,'Edited successfully')" type="button" class="btn btn-success isWorking" style="font-style:normal" data-bs-dismiss="modal"> Edit</button>
+                            <button x-on:click="chosenRecipe.title=title;chosenRecipe=adjust(chosenRecipe,editIngredients,editInstructions);edited=await updateRecipe(chosenRecipe,chosenRecipe.id,chosnenRecipeCategories);expandEdit= !edited;recipes=await listRecipes();fire(edited,'Edited successfully')" type="button" class="btn btn-success isWorking" style="font-style:normal" data-bs-dismiss="modal"> Edit</button>
                         </div>
                     </div>
                 </div>
             </div>
             <script>
-                async function updateRecipe(jsonRecipe, id,chosnenRecipeCategories) {
+                async function updateRecipe(jsonRecipe, id, chosnenRecipeCategories) {
                     jsonRecipe = {
                         'Id': jsonRecipe.Id,
                         'Title': jsonRecipe.Title,

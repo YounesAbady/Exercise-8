@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SD.LLBLGen.Pro.DQE.PostgreSql;
+using SD.LLBLGen.Pro.LinqSupportClasses;
 using SD.LLBLGen.Pro.ORMSupportClasses;
 using YumCity_Migrations.DatabaseSpecific;
 using YumCity_Migrations.EntityClasses;
@@ -28,7 +29,7 @@ namespace API.Controllers
                 using (var adapter = new DataAccessAdapter(_configuration.GetConnectionString("YumCityDb")))
                 {
                     var metaData = new LinqMetaData(adapter);
-                    var categories = metaData.Category.OrderBy(x => x.Data).ToList();
+                    var categories = await metaData.Category.OrderBy(x => x.Data).ToListAsync();
                     if (categories.Count() == 0)
                         throw new InvalidOperationException("Cant be empty");
                     else
@@ -52,17 +53,15 @@ namespace API.Controllers
                 using (var adapter = new DataAccessAdapter(_configuration.GetConnectionString("YumCityDb")))
                 {
                     var metaData = new LinqMetaData(adapter);
-                    var categories = metaData.Category.ToList();
+                    var oldCategory = await metaData.Category.FirstOrDefaultAsync(c => c.Data == category);
                     if (string.IsNullOrEmpty(category))
                         return BadRequest("Cant be empty");
                     else
                     {
-                        foreach (var item in categories)
+
+                        if (oldCategory is not null)
                         {
-                            if (item.Data == category)
-                            {
-                                return BadRequest("Category already exists!");
-                            }
+                            return BadRequest("Category already exists!");
                         }
                         CategoryEntity newCategory = new CategoryEntity
                         {
@@ -95,7 +94,7 @@ namespace API.Controllers
                         throw new InvalidOperationException("Cant be empty");
                     else
                     {
-                        CategoryEntity category = metaData.Category.FirstOrDefault(c => c.Id == id);
+                        CategoryEntity category = await metaData.Category.FirstOrDefaultAsync(c => c.Id == id);
                         var recipeCategories = metaData.RecipeCategory;
                         foreach (RecipeCategoryEntity recipeCategory in recipeCategories)
                         {
@@ -126,7 +125,7 @@ namespace API.Controllers
                 using (var adapter = new DataAccessAdapter(_configuration.GetConnectionString("YumCityDb")))
                 {
                     var metaData = new LinqMetaData(adapter);
-                    CategoryEntity category = metaData.Category.FirstOrDefault(c => c.Id == id);
+                    CategoryEntity category = await metaData.Category.FirstOrDefaultAsync(c => c.Id == id);
                     if (string.IsNullOrEmpty(newCategory))
                         throw new InvalidOperationException("Cant be empty");
                     else

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Npgsql;
 using SD.LLBLGen.Pro.DQE.PostgreSql;
+using SD.LLBLGen.Pro.LinqSupportClasses;
 using SD.LLBLGen.Pro.ORMSupportClasses;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -35,10 +36,10 @@ namespace Backend.Controllers
             using (var adapter = new DataAccessAdapter(_configuration.GetConnectionString("YumCityDb")))
             {
                 var metaData = new LinqMetaData(adapter);
-                UserEntity user = metaData.User.FirstOrDefault(x => x.Name == newUser.Username);
+                UserEntity user = await metaData.User.FirstOrDefaultAsync(x => x.Name == newUser.Username);
                 if (string.IsNullOrEmpty(newUser.Username) || string.IsNullOrEmpty(newUser.Password))
                     return BadRequest("Cant be empty");
-                else if (user != null)
+                else if (user is not null)
                 {
                     return BadRequest("Username already taken!");
                 }
@@ -50,7 +51,6 @@ namespace Backend.Controllers
                     var hasher = new PasswordHasher<UserEntity>();
                     user.PasswordHash = hasher.HashPassword(user, newUser.Password);
                     await adapter.SaveEntityAsync(user);
-                    //await SaveData();
                     return Ok();
                 }
             }
@@ -64,7 +64,7 @@ namespace Backend.Controllers
             using (var adapter = new DataAccessAdapter(_configuration.GetConnectionString("YumCityDb")))
             {
                 var metaData = new LinqMetaData(adapter);
-                UserEntity loggedUser = metaData.User.SingleOrDefault(x => x.Name == user.Username);
+                UserEntity loggedUser = await metaData.User.FirstOrDefaultAsync(x => x.Name == user.Username);
                 var hasher = new PasswordHasher<UserEntity>();
                 if (loggedUser == null)
                     return BadRequest("User not found!");
@@ -91,9 +91,9 @@ namespace Backend.Controllers
                 using (var adapter = new DataAccessAdapter(_configuration.GetConnectionString("YumCityDb")))
                 {
                     var metaData = new LinqMetaData(adapter);
-                    RefreshTokenEntity refreshToken = metaData.RefreshToken.FirstOrDefault(x => x.Token.Equals(rT));
-                    UserEntity loggedUser = metaData.User.FirstOrDefault(user => user.Id == id);
-                    RefreshTokenEntity userRefreshToken = metaData.RefreshToken.FirstOrDefault(x => x.Id == loggedUser.RefreshTokenId);
+                    RefreshTokenEntity refreshToken = await metaData.RefreshToken.FirstOrDefaultAsync(x => x.Token.Equals(rT));
+                    UserEntity loggedUser = await metaData.User.FirstOrDefaultAsync(user => user.Id == id);
+                    RefreshTokenEntity userRefreshToken = await metaData.RefreshToken.FirstOrDefaultAsync(x => x.Id == loggedUser.RefreshTokenId);
                     if (!loggedUser.RefreshTokenId.Equals(refreshToken.Id))
                         return Unauthorized("Invalid refresh token");
                     else if (userRefreshToken.TimeExpires < DateTime.Now)
@@ -125,12 +125,12 @@ namespace Backend.Controllers
                 {
                     var metaData = new LinqMetaData(adapter);
                     var hasher = new PasswordHasher<UserEntity>();
-                    UserEntity loggedUser = metaData.User.FirstOrDefault(x => x.Name == user.Username);
+                    UserEntity loggedUser = await metaData.User.FirstOrDefaultAsync(x => x.Name == user.Username);
                     if (loggedUser == null)
                         return BadRequest("User not found!");
                     if (hasher.VerifyHashedPassword(loggedUser, loggedUser.PasswordHash, user.Password).Equals(PasswordVerificationResult.Success))
                     {
-                        RefreshTokenEntity refreshToken = metaData.RefreshToken.FirstOrDefault(x => x.Id == loggedUser.RefreshTokenId);
+                        RefreshTokenEntity refreshToken = await metaData.RefreshToken.FirstOrDefaultAsync(x => x.Id == loggedUser.RefreshTokenId);
                         return Ok(refreshToken.Token);
                     }
                     else
@@ -155,7 +155,7 @@ namespace Backend.Controllers
                 {
                     var metaData = new LinqMetaData(adapter);
                     var hasher = new PasswordHasher<UserEntity>();
-                    UserEntity loggedUser = metaData.User.FirstOrDefault(x => x.Name == user.Username);
+                    UserEntity loggedUser = await metaData.User.FirstOrDefaultAsync(x => x.Name == user.Username);
                     if (loggedUser == null)
                         return BadRequest("User not found!");
                     if (hasher.VerifyHashedPassword(loggedUser, loggedUser.PasswordHash, user.Password).Equals(PasswordVerificationResult.Success))
@@ -195,7 +195,7 @@ namespace Backend.Controllers
                     HttpOnly = true,
                     Expires = newRT.TimeExpires
                 };
-                UserEntity loggedUser = metaData.User.FirstOrDefault(x => x.Id == id);
+                UserEntity loggedUser = await metaData.User.FirstOrDefaultAsync(x => x.Id == id);
                 loggedUser.RefreshTokenId = newRT.Id;
                 newRT.TimeCreated = newRT.TimeCreated;
                 newRT.TimeExpires = newRT.TimeExpires;

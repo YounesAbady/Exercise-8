@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SD.LLBLGen.Pro.DQE.PostgreSql;
+using SD.LLBLGen.Pro.LinqSupportClasses;
 using SD.LLBLGen.Pro.ORMSupportClasses;
 using YumCity_Migrations.DatabaseSpecific;
 using YumCity_Migrations.EntityClasses;
@@ -34,7 +35,7 @@ namespace API.Controllers
                 using (var adapter = new DataAccessAdapter(_configuration.GetConnectionString("YumCityDb")))
                 {
                     var metaData = new LinqMetaData(adapter);
-                    var recipes = metaData.Recipe.With(p => p.Ingredients, p => p.Instructions, p => p.RecipeCategories).OrderBy(p => p.Title).ToList();
+                    var recipes = await metaData.Recipe.With(p => p.Ingredients, p => p.Instructions, p => p.RecipeCategories).OrderBy(p => p.Title).ToListAsync();
                     if (recipes.Count() == 0)
                         throw new InvalidOperationException("Cant be empty");
                     else
@@ -91,7 +92,7 @@ namespace API.Controllers
                     using (var adapter = new DataAccessAdapter(_configuration.GetConnectionString("YumCityDb")))
                     {
                         var metaData = new LinqMetaData(adapter);
-                        RecipeEntity oldRecipe = metaData.Recipe.FirstOrDefault(x => x.Id == id);
+                        RecipeEntity oldRecipe = await metaData.Recipe.FirstOrDefaultAsync(x => x.Id == id);
                         newRecipe.Ingredients = newRecipe.Ingredients.Where(r => !string.IsNullOrWhiteSpace(r)).ToList();
                         newRecipe.Instructions = newRecipe.Instructions.Where(r => !string.IsNullOrWhiteSpace(r)).ToList();
                         if (newRecipe.Ingredients.Count == 0 || newRecipe.Instructions.Count == 0 || newRecipe.Categories.Count == 0 || string.IsNullOrWhiteSpace(newRecipe.Title))
@@ -128,7 +129,7 @@ namespace API.Controllers
                     using (var adapter = new DataAccessAdapter(_configuration.GetConnectionString("YumCityDb")))
                     {
                         var metaData = new LinqMetaData(adapter);
-                        RecipeEntity recipe = metaData.Recipe.FirstOrDefault(x => x.Id == id);
+                        RecipeEntity recipe = await metaData.Recipe.FirstOrDefaultAsync(x => x.Id == id);
                         await adapter.DeleteEntityAsync(recipe);
                         return Ok();
                     }
