@@ -5,7 +5,7 @@ Tables:
 	| --- | --- | --- |
 	| Guid | Id | Primary Key |
 	| String | Title | |
-	| Guid | UserId | Foreign Key |
+	| Guid | UserId | Foreign Key => (User.Id) |
 - User
 
 	| Field Type | Field Name | Keys
@@ -13,7 +13,7 @@ Tables:
     | Guid | Id | Primary Key |
 	| String | Name |  |
 	| String | PasswordHash | |
-	| Guid | RefreshTokenId | Foreign Key |
+	| Guid | RefreshTokenId | Foreign Key => (RefreshToken.Id) |
 - Category
 
 	| Field Type | Field Name | Keys
@@ -26,21 +26,21 @@ Tables:
 	| --- | --- | --- |
     | Guid | Id | Primary Key |
 	| String | Data |  |
-	| Guid | RecipeId | Foreign Key |
+	| Guid | RecipeId | Foreign Key => (Recipe.Id) |
 - Instruction
 
 	| Field Type | Field Name | Keys
 	| --- | --- | --- |
     | Guid | Id | Primary Key |
 	| String | Data |  |
-	| Guid | RecipeId | Foreign Key |
+	| Guid | RecipeId | Foreign Key => (Recipe.Id) |
 - Ingredient
 
 	| Field Type | Field Name | Keys
 	| --- | --- | --- |
     | Guid | Id | Primary Key |
 	| String | Data |  |
-	| Guid | RecipeId | Foreign Key |
+	| Guid | RecipeId | Foreign Key => (Recipe.Id) |
 - RefreshToken
 
 	| Field Type | Field Name | Keys
