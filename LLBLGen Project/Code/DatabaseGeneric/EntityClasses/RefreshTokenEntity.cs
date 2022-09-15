@@ -142,15 +142,23 @@ namespace YumCity_Migrations.EntityClasses
 		public static IPrefetchPathElement2 PrefetchPathUsers { get { return _staticMetaData.GetPrefetchPathElement("Users", CommonEntityBase.CreateEntityCollection<UserEntity>()); } }
 
 		/// <summary>The Id property of the Entity RefreshToken<br/><br/></summary>
-		/// <remarks>Mapped on  table field: "RefreshToken"."Id".<br/>Table field type characteristics (type, precision, scale, length): Uuid, 0, 0, 0.<br/>Table field behavior characteristics (is nullable, is PK, is identity): false, true, false</remarks>
+		/// <remarks>Mapped on  table field: "refresh_token"."id".<br/>Table field type characteristics (type, precision, scale, length): Uuid, 0, 0, 0.<br/>Table field behavior characteristics (is nullable, is PK, is identity): false, true, false</remarks>
 		public virtual System.Guid Id
 		{
 			get { return (System.Guid)GetValue((int)RefreshTokenFieldIndex.Id, true); }
 			set	{ SetValue((int)RefreshTokenFieldIndex.Id, value); }
 		}
 
+		/// <summary>The IsActive property of the Entity RefreshToken<br/><br/></summary>
+		/// <remarks>Mapped on  table field: "refresh_token"."is_active".<br/>Table field type characteristics (type, precision, scale, length): Boolean, 0, 0, 0.<br/>Table field behavior characteristics (is nullable, is PK, is identity): false, false, false</remarks>
+		public virtual System.Boolean IsActive
+		{
+			get { return (System.Boolean)GetValue((int)RefreshTokenFieldIndex.IsActive, true); }
+			set	{ SetValue((int)RefreshTokenFieldIndex.IsActive, value); }
+		}
+
 		/// <summary>The TimeCreated property of the Entity RefreshToken<br/><br/></summary>
-		/// <remarks>Mapped on  table field: "RefreshToken"."TimeCreated".<br/>Table field type characteristics (type, precision, scale, length): Timestamp, 0, 0, 0.<br/>Table field behavior characteristics (is nullable, is PK, is identity): false, false, false</remarks>
+		/// <remarks>Mapped on  table field: "refresh_token"."time_created".<br/>Table field type characteristics (type, precision, scale, length): Timestamp, 0, 0, 0.<br/>Table field behavior characteristics (is nullable, is PK, is identity): false, false, false</remarks>
 		public virtual System.DateTime TimeCreated
 		{
 			get { return (System.DateTime)GetValue((int)RefreshTokenFieldIndex.TimeCreated, true); }
@@ -158,7 +166,7 @@ namespace YumCity_Migrations.EntityClasses
 		}
 
 		/// <summary>The TimeExpires property of the Entity RefreshToken<br/><br/></summary>
-		/// <remarks>Mapped on  table field: "RefreshToken"."TimeExpires".<br/>Table field type characteristics (type, precision, scale, length): Timestamp, 0, 0, 0.<br/>Table field behavior characteristics (is nullable, is PK, is identity): false, false, false</remarks>
+		/// <remarks>Mapped on  table field: "refresh_token"."time_expires".<br/>Table field type characteristics (type, precision, scale, length): Timestamp, 0, 0, 0.<br/>Table field behavior characteristics (is nullable, is PK, is identity): false, false, false</remarks>
 		public virtual System.DateTime TimeExpires
 		{
 			get { return (System.DateTime)GetValue((int)RefreshTokenFieldIndex.TimeExpires, true); }
@@ -166,7 +174,7 @@ namespace YumCity_Migrations.EntityClasses
 		}
 
 		/// <summary>The Token property of the Entity RefreshToken<br/><br/></summary>
-		/// <remarks>Mapped on  table field: "RefreshToken"."Token".<br/>Table field type characteristics (type, precision, scale, length): Text, 0, 0, 1073741824.<br/>Table field behavior characteristics (is nullable, is PK, is identity): false, false, false</remarks>
+		/// <remarks>Mapped on  table field: "refresh_token"."token".<br/>Table field type characteristics (type, precision, scale, length): Text, 0, 0, 1073741824.<br/>Table field behavior characteristics (is nullable, is PK, is identity): false, false, false</remarks>
 		public virtual System.String Token
 		{
 			get { return (System.String)GetValue((int)RefreshTokenFieldIndex.Token, true); }
@@ -189,6 +197,8 @@ namespace YumCity_Migrations
 	{
 		///<summary>Id. </summary>
 		Id,
+		///<summary>IsActive. </summary>
+		IsActive,
 		///<summary>TimeCreated. </summary>
 		TimeCreated,
 		///<summary>TimeExpires. </summary>

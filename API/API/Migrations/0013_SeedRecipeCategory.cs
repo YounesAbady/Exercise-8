@@ -5,37 +5,42 @@ namespace API.Migrations
     [Migration(13)]
     public class _0013_SeedRecipeCategory : Migration
     {
-        public record RecipeCategory
+        public record recipe_category
         {
-            public Guid Id { get; set; }
-            public string Data { get; set; }
-            public Guid RecipeId { get; set; }
+            public Guid id { get; set; }
+            public string data { get; set; }
+            public Guid recipe_id { get; set; }
+            public bool is_active { get; set; }
         }
-        List<RecipeCategory> recipeCategories = new()
+        List<recipe_category> recipeCategories = new()
         {
-            new RecipeCategory
+            new recipe_category
             {
-                Id = Guid.NewGuid(),
-                Data = "French",
-                RecipeId = Guid.Parse("dd98a0ab-8a29-4ad0-a631-ff6dea396644")
+                id = Guid.NewGuid(),
+                data = "French",
+                recipe_id = Guid.Parse("dd98a0ab-8a29-4ad0-a631-ff6dea396644"),
+                is_active = true
             },
-            new RecipeCategory
+            new recipe_category
             {
-                Id = Guid.NewGuid(),
-                Data = "English",
-                RecipeId = Guid.Parse("dd98a0ab-8a29-4ad0-a631-ff6dea396644")
+                id = Guid.NewGuid(),
+                data = "English",
+                recipe_id = Guid.Parse("dd98a0ab-8a29-4ad0-a631-ff6dea396644"),
+                is_active=true
             },
-            new RecipeCategory
+            new recipe_category
             {
-                Id = Guid.NewGuid(),
-                Data = "Italian",
-                RecipeId = Guid.Parse("f35ce39f-2105-482e-80b6-bddd5b0f663c")
+                id = Guid.NewGuid(),
+                data = "Italian",
+                recipe_id = Guid.Parse("f35ce39f-2105-482e-80b6-bddd5b0f663c"),
+                is_active = true
             },
-            new RecipeCategory
+            new recipe_category
             {
-                Id = Guid.NewGuid(),
-                Data = "Egyption",
-                RecipeId = Guid.Parse("f35ce39f-2105-482e-80b6-bddd5b0f663c")
+                id = Guid.NewGuid(),
+                data = "Egyptian",
+                recipe_id = Guid.Parse("f35ce39f-2105-482e-80b6-bddd5b0f663c"),
+                is_active = true
             }
         };
         public override void Down()
@@ -44,9 +49,9 @@ namespace API.Migrations
 
         public override void Up()
         {
-            foreach (RecipeCategory recipeCategory in recipeCategories)
+            foreach (recipe_category recipeCategory in recipeCategories)
             {
-                Insert.IntoTable(tableName: "RecipeCategory").Row(recipeCategory);
+                Insert.IntoTable(tableName: "recipe_category").Row(recipeCategory);
             }
         }
     }

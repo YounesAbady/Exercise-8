@@ -5,32 +5,37 @@ namespace API.Migrations
     [Migration(12)]
     public class _0012_SeedCategories : Migration
     {
-        public record Category
+        public record category
         {
-            public Guid Id { get; set; }
-            public string Data { get; set; }
+            public Guid id { get; set; }
+            public string data { get; set; }
+            public bool is_active { get; set; }
         }
-        List<Category> categories = new()
+        List<category> categories = new()
         {
-            new Category
+            new category
             {
-                Id = Guid.NewGuid(),
-                Data = "French"
+                id = Guid.NewGuid(),
+                data = "French",
+                is_active = true
             },
-            new Category
+            new category
             {
-                Id = Guid.NewGuid(),
-                Data = "Egyption"
+                id = Guid.NewGuid(),
+                data = "Egyptian",
+                is_active=true
             },
-            new Category
+            new category
             {
-                Id = Guid.NewGuid(),
-                Data = "Italian"
+                id = Guid.NewGuid(),
+                data = "Italian",
+                is_active=true
             },
-            new Category
+            new category
             {
-                Id = Guid.NewGuid(),
-                Data = "English"
+                id = Guid.NewGuid(),
+                data = "English",
+                is_active=true
             }
         };
         public override void Down()
@@ -39,9 +44,9 @@ namespace API.Migrations
 
         public override void Up()
         {
-            foreach (Category category in categories)
+            foreach (category category in categories)
             {
-                Insert.IntoTable(tableName: "Category").Row(category);
+                Insert.IntoTable(tableName: "category").Row(category);
             }
         }
     }

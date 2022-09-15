@@ -35,7 +35,7 @@ namespace API.Controllers
                 using (var adapter = new DataAccessAdapter(_configuration.GetConnectionString("YumCityDb")))
                 {
                     var metaData = new LinqMetaData(adapter);
-                    var recipes = await metaData.Recipe.With(p => p.Ingredients, p => p.Instructions, p => p.RecipeCategories).OrderBy(p => p.Title).ToListAsync();
+                    var recipes = await metaData.Recipe.Where(p => p.IsActive).With(p => p.Ingredients.Where(x => x.IsActive), p => p.Instructions.Where(x => x.IsActive), p => p.RecipeCategories.Where(x => x.IsActive)).OrderBy(p => p.Title).ToListAsync();
                     if (recipes.Count() == 0)
                         throw new InvalidOperationException("Cant be empty");
                     else
@@ -84,29 +84,25 @@ namespace API.Controllers
             try
             {
                 await GlobalAntiforgery.ValidateRequestAsync(HttpContext);
-                if (id == Guid.Empty || newRecipe.Ingredients.Count == 0 || newRecipe.Instructions.Count == 0 || newRecipe.Categories.Count == 0 || string.IsNullOrWhiteSpace(newRecipe.Title))
-                    throw new InvalidOperationException("Cant be empty");
-                else
+                RuntimeConfiguration.ConfigureDQE<PostgreSqlDQEConfiguration>(c => c.AddDbProviderFactory(typeof(Npgsql.NpgsqlFactory)));
+                using (var adapter = new DataAccessAdapter(_configuration.GetConnectionString("YumCityDb")))
                 {
-                    RuntimeConfiguration.ConfigureDQE<PostgreSqlDQEConfiguration>(c => c.AddDbProviderFactory(typeof(Npgsql.NpgsqlFactory)));
-                    using (var adapter = new DataAccessAdapter(_configuration.GetConnectionString("YumCityDb")))
+                    var metaData = new LinqMetaData(adapter);
+                    RecipeEntity oldRecipe = await metaData.Recipe.FirstOrDefaultAsync(x => x.Id == id && x.IsActive);
+                    newRecipe.Ingredients = newRecipe.Ingredients.Where(r => !string.IsNullOrWhiteSpace(r)).ToList();
+                    newRecipe.Instructions = newRecipe.Instructions.Where(r => !string.IsNullOrWhiteSpace(r)).ToList();
+                    if (newRecipe.Ingredients.Count == 0 || newRecipe.Instructions.Count == 0 || newRecipe.Categories.Count == 0 || string.IsNullOrWhiteSpace(newRecipe.Title) || id == Guid.Empty)
+                        throw new InvalidOperationException("Cant be empty");
+                    else
                     {
-                        var metaData = new LinqMetaData(adapter);
-                        RecipeEntity oldRecipe = await metaData.Recipe.FirstOrDefaultAsync(x => x.Id == id);
-                        newRecipe.Ingredients = newRecipe.Ingredients.Where(r => !string.IsNullOrWhiteSpace(r)).ToList();
-                        newRecipe.Instructions = newRecipe.Instructions.Where(r => !string.IsNullOrWhiteSpace(r)).ToList();
-                        if (newRecipe.Ingredients.Count == 0 || newRecipe.Instructions.Count == 0 || newRecipe.Categories.Count == 0 || string.IsNullOrWhiteSpace(newRecipe.Title))
-                            throw new InvalidOperationException("Cant be empty");
-                        else
-                        {
-                            oldRecipe.Title = newRecipe.Title;
-                            RecipeEntity recipe = Convert(newRecipe);
-                            await adapter.DeleteEntityAsync(oldRecipe);
-                            await adapter.SaveEntityAsync(recipe);
-                            return Ok();
-                        }
+                        oldRecipe.Title = newRecipe.Title;
+                        RecipeEntity recipe = Convert(newRecipe);
+                        await adapter.DeleteEntityAsync(oldRecipe);
+                        await adapter.SaveEntityAsync(recipe);
+                        return Ok();
                     }
                 }
+
             }
             catch (Exception e)
             {
@@ -130,7 +126,8 @@ namespace API.Controllers
                     {
                         var metaData = new LinqMetaData(adapter);
                         RecipeEntity recipe = await metaData.Recipe.FirstOrDefaultAsync(x => x.Id == id);
-                        await adapter.DeleteEntityAsync(recipe);
+                        recipe.IsActive = false;
+                        await adapter.SaveEntityAsync(recipe);
                         return Ok();
                     }
                 }
@@ -153,6 +150,7 @@ namespace API.Controllers
         private RecipeEntity Convert(RecipeDto recipeDto)
         {
             RecipeEntity recipe = new();
+            recipe.IsActive = true;
             if (string.IsNullOrEmpty(recipeDto.Id.ToString()) || Guid.Equals(recipeDto.Id, Guid.Empty))
                 recipe.Id = Guid.NewGuid();
             else
@@ -170,7 +168,8 @@ namespace API.Controllers
                     {
                         Id = Guid.NewGuid(),
                         Data = item,
-                        RecipeId = recipe.Id
+                        RecipeId = recipe.Id,
+                        IsActive = true
                     };
                     recipe.Ingredients.Add(ingredient);
                 }
@@ -180,7 +179,8 @@ namespace API.Controllers
                     {
                         Id = Guid.NewGuid(),
                         Data = item,
-                        RecipeId = recipe.Id
+                        RecipeId = recipe.Id,
+                        IsActive = true
                     };
                     recipe.Instructions.Add(instruction);
                 }
@@ -190,7 +190,8 @@ namespace API.Controllers
                     {
                         Id = Guid.NewGuid(),
                         Data = item,
-                        RecipeId = recipe.Id
+                        RecipeId = recipe.Id,
+                        IsActive = true
                     };
                     recipe.RecipeCategories.Add(recipeCategory);
                 }

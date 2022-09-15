@@ -7,14 +7,15 @@ namespace API.Migrations
     {
         public override void Down()
         {
-            Delete.Table("Category");
+            Delete.Table("category");
         }
 
         public override void Up()
         {
-            Create.Table("Category")
-                .WithColumn("Id").AsGuid().NotNullable().PrimaryKey()
-                .WithColumn("Data").AsString().NotNullable();
+            Create.Table("category")
+                .WithColumn("id").AsGuid().NotNullable().PrimaryKey()
+                .WithColumn("data").AsString().NotNullable()
+                .WithColumn("is_active").AsBoolean().NotNullable();
         }
     }
 }

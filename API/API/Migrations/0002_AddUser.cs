@@ -7,16 +7,17 @@ namespace API.Migrations
     {
         public override void Down()
         {
-            Delete.Table("User");
+            Delete.Table("user");
         }
 
         public override void Up()
         {
-            Create.Table("User")
-                .WithColumn("Id").AsGuid().NotNullable().PrimaryKey()
-                .WithColumn("Name").AsString().NotNullable().Unique()
-                .WithColumn("PasswordHash").AsString().NotNullable()
-                .WithColumn("RefreshTokenId").AsGuid().Nullable().ForeignKey("RefreshToken", "Id");
+            Create.Table("user")
+                .WithColumn("id").AsGuid().NotNullable().PrimaryKey()
+                .WithColumn("name").AsString().NotNullable().Unique()
+                .WithColumn("password_hash").AsString().NotNullable()
+                .WithColumn("refresh_token_id").AsGuid().Nullable().ForeignKey("refresh_token", "id")
+                .WithColumn("is_active").AsBoolean().NotNullable();
         }
     }
 }

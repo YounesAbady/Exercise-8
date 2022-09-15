@@ -7,15 +7,16 @@ namespace API.Migrations
     {
         public override void Down()
         {
-            Delete.Table("Ingredient");
+            Delete.Table("ingredient");
         }
 
         public override void Up()
         {
-            Create.Table("Ingredient")
-                .WithColumn("Id").AsGuid().NotNullable().PrimaryKey()
-                .WithColumn("Data").AsString().NotNullable()
-                .WithColumn("RecipeId").AsGuid().NotNullable().ForeignKey("Recipe", "Id").OnDelete(System.Data.Rule.Cascade);
+            Create.Table("ingredient")
+                .WithColumn("id").AsGuid().NotNullable().PrimaryKey()
+                .WithColumn("data").AsString().NotNullable()
+                .WithColumn("recipe_id").AsGuid().NotNullable().ForeignKey("recipe", "id").OnDelete(System.Data.Rule.Cascade)
+                .WithColumn("is_active").AsBoolean().NotNullable(); 
         }
     }
 }

@@ -29,7 +29,7 @@ namespace API.Controllers
                 using (var adapter = new DataAccessAdapter(_configuration.GetConnectionString("YumCityDb")))
                 {
                     var metaData = new LinqMetaData(adapter);
-                    var categories = await metaData.Category.OrderBy(x => x.Data).ToListAsync();
+                    var categories = await metaData.Category.Where(x => x.IsActive == true).OrderBy(x => x.Data).ToListAsync();
                     if (categories.Count() == 0)
                         throw new InvalidOperationException("Cant be empty");
                     else
@@ -53,7 +53,7 @@ namespace API.Controllers
                 using (var adapter = new DataAccessAdapter(_configuration.GetConnectionString("YumCityDb")))
                 {
                     var metaData = new LinqMetaData(adapter);
-                    var oldCategory = await metaData.Category.FirstOrDefaultAsync(c => c.Data == category);
+                    var oldCategory = await metaData.Category.FirstOrDefaultAsync(c => c.Data == category && c.IsActive == true);
                     if (string.IsNullOrEmpty(category))
                         return BadRequest("Cant be empty");
                     else
@@ -66,7 +66,8 @@ namespace API.Controllers
                         CategoryEntity newCategory = new CategoryEntity
                         {
                             Id = Guid.NewGuid(),
-                            Data = category
+                            Data = category,
+                            IsActive = true
                         };
                         await adapter.SaveEntityAsync(newCategory);
                         return Ok();
@@ -94,16 +95,18 @@ namespace API.Controllers
                         throw new InvalidOperationException("Cant be empty");
                     else
                     {
-                        CategoryEntity category = await metaData.Category.FirstOrDefaultAsync(c => c.Id == id);
+                        CategoryEntity category = await metaData.Category.FirstOrDefaultAsync(c => c.Id == id && c.IsActive == true);
+                        category.IsActive = false;
                         var recipeCategories = metaData.RecipeCategory;
                         foreach (RecipeCategoryEntity recipeCategory in recipeCategories)
                         {
                             if (recipeCategory.Data == category.Data)
                             {
-                                await adapter.DeleteEntityAsync(recipeCategory);
+                                recipeCategory.IsActive = false;
+                                await adapter.SaveEntityAsync(recipeCategory);
                             }
                         }
-                        await adapter.DeleteEntityAsync(category);
+                        await adapter.SaveEntityAsync(category);
                         return Ok();
                     }
                 }
@@ -125,7 +128,7 @@ namespace API.Controllers
                 using (var adapter = new DataAccessAdapter(_configuration.GetConnectionString("YumCityDb")))
                 {
                     var metaData = new LinqMetaData(adapter);
-                    CategoryEntity category = await metaData.Category.FirstOrDefaultAsync(c => c.Id == id);
+                    CategoryEntity category = await metaData.Category.FirstOrDefaultAsync(c => c.Id == id && c.IsActive == true);
                     if (string.IsNullOrEmpty(newCategory))
                         throw new InvalidOperationException("Cant be empty");
                     else

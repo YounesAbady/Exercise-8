@@ -178,15 +178,23 @@ namespace YumCity_Migrations.EntityClasses
 		public static IPrefetchPathElement2 PrefetchPathUser { get { return _staticMetaData.GetPrefetchPathElement("User", CommonEntityBase.CreateEntityCollection<UserEntity>()); } }
 
 		/// <summary>The Id property of the Entity Recipe<br/><br/></summary>
-		/// <remarks>Mapped on  table field: "Recipe"."Id".<br/>Table field type characteristics (type, precision, scale, length): Uuid, 0, 0, 0.<br/>Table field behavior characteristics (is nullable, is PK, is identity): false, true, false</remarks>
+		/// <remarks>Mapped on  table field: "recipe"."id".<br/>Table field type characteristics (type, precision, scale, length): Uuid, 0, 0, 0.<br/>Table field behavior characteristics (is nullable, is PK, is identity): false, true, false</remarks>
 		public virtual System.Guid Id
 		{
 			get { return (System.Guid)GetValue((int)RecipeFieldIndex.Id, true); }
 			set	{ SetValue((int)RecipeFieldIndex.Id, value); }
 		}
 
+		/// <summary>The IsActive property of the Entity Recipe<br/><br/></summary>
+		/// <remarks>Mapped on  table field: "recipe"."is_active".<br/>Table field type characteristics (type, precision, scale, length): Boolean, 0, 0, 0.<br/>Table field behavior characteristics (is nullable, is PK, is identity): false, false, false</remarks>
+		public virtual System.Boolean IsActive
+		{
+			get { return (System.Boolean)GetValue((int)RecipeFieldIndex.IsActive, true); }
+			set	{ SetValue((int)RecipeFieldIndex.IsActive, value); }
+		}
+
 		/// <summary>The Title property of the Entity Recipe<br/><br/></summary>
-		/// <remarks>Mapped on  table field: "Recipe"."Title".<br/>Table field type characteristics (type, precision, scale, length): Text, 0, 0, 1073741824.<br/>Table field behavior characteristics (is nullable, is PK, is identity): false, false, false</remarks>
+		/// <remarks>Mapped on  table field: "recipe"."title".<br/>Table field type characteristics (type, precision, scale, length): Text, 0, 0, 1073741824.<br/>Table field behavior characteristics (is nullable, is PK, is identity): false, false, false</remarks>
 		public virtual System.String Title
 		{
 			get { return (System.String)GetValue((int)RecipeFieldIndex.Title, true); }
@@ -194,7 +202,7 @@ namespace YumCity_Migrations.EntityClasses
 		}
 
 		/// <summary>The UserId property of the Entity Recipe<br/><br/></summary>
-		/// <remarks>Mapped on  table field: "Recipe"."UserId".<br/>Table field type characteristics (type, precision, scale, length): Uuid, 0, 0, 0.<br/>Table field behavior characteristics (is nullable, is PK, is identity): false, false, false</remarks>
+		/// <remarks>Mapped on  table field: "recipe"."user_id".<br/>Table field type characteristics (type, precision, scale, length): Uuid, 0, 0, 0.<br/>Table field behavior characteristics (is nullable, is PK, is identity): false, false, false</remarks>
 		public virtual System.Guid UserId
 		{
 			get { return (System.Guid)GetValue((int)RecipeFieldIndex.UserId, true); }
@@ -233,6 +241,8 @@ namespace YumCity_Migrations
 	{
 		///<summary>Id. </summary>
 		Id,
+		///<summary>IsActive. </summary>
+		IsActive,
 		///<summary>Title. </summary>
 		Title,
 		///<summary>UserId. </summary>

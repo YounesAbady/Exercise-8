@@ -7,16 +7,17 @@ namespace API.Migrations
     {
         public override void Down()
         {
-            Delete.Table("RefreshToken");
+            Delete.Table("refresh_token");
         }
 
         public override void Up()
         {
-            Create.Table("RefreshToken")
-                .WithColumn("Id").AsGuid().NotNullable().PrimaryKey()
-                .WithColumn("Token").AsString().NotNullable()
-                .WithColumn("TimeCreated").AsDateTime().NotNullable()
-                .WithColumn("TimeExpires").AsDateTime().NotNullable();
+            Create.Table("refresh_token")
+                .WithColumn("id").AsGuid().NotNullable().PrimaryKey()
+                .WithColumn("token").AsString().NotNullable()
+                .WithColumn("time_created").AsDateTime().NotNullable()
+                .WithColumn("time_expires").AsDateTime().NotNullable()
+                .WithColumn("is_active").AsBoolean().NotNullable();
         }
     }
 }

@@ -5,25 +5,28 @@ namespace API.Migrations
     [Migration(9)]
     public class _0009_SeedRecipe : Migration
     {
-        public record Recipe
+        public record recipe
         {
-            public Guid Id { get; set; }
-            public string Title { get; set; }
-            public Guid UserId { get; set; }
+            public Guid id { get; set; }
+            public string title { get; set; }
+            public Guid user_id { get; set; }
+            public bool is_active { get; set; }
         }
-        List<Recipe> recipes = new()
+        List<recipe> recipes = new()
         {
-            new Recipe
+            new recipe
             {
-                Id=Guid.Parse("dd98a0ab-8a29-4ad0-a631-ff6dea396644"),
-                Title="Test1",
-                UserId=Guid.Parse("0b89bb77-33ef-471d-8390-59b3969d86ae")
+                id=Guid.Parse("dd98a0ab-8a29-4ad0-a631-ff6dea396644"),
+                title="Test1",
+                user_id=Guid.Parse("0b89bb77-33ef-471d-8390-59b3969d86ae"),
+                is_active=true
             },
-            new Recipe
+            new recipe
             {
-                Id = Guid.Parse("f35ce39f-2105-482e-80b6-bddd5b0f663c"),
-                Title = "Test2",
-                UserId=Guid.Parse("0b89bb77-33ef-471d-8390-59b3969d86ae")
+                id = Guid.Parse("f35ce39f-2105-482e-80b6-bddd5b0f663c"),
+                title = "Test2",
+                user_id=Guid.Parse("0b89bb77-33ef-471d-8390-59b3969d86ae"),
+                is_active = true
             }
         };
         public override void Down()
@@ -32,9 +35,9 @@ namespace API.Migrations
 
         public override void Up()
         {
-            foreach (Recipe recipe in recipes)
+            foreach (recipe recipe in recipes)
             {
-                Insert.IntoTable(tableName: "Recipe").Row(recipe);
+                Insert.IntoTable(tableName: "recipe").Row(recipe);
             }
         }
     }

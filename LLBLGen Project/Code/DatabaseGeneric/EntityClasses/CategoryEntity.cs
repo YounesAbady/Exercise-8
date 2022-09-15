@@ -130,7 +130,7 @@ namespace YumCity_Migrations.EntityClasses
 		public static CategoryRelations Relations { get { return _relationsFactory; } }
 
 		/// <summary>The Data property of the Entity Category<br/><br/></summary>
-		/// <remarks>Mapped on  table field: "Category"."Data".<br/>Table field type characteristics (type, precision, scale, length): Text, 0, 0, 1073741824.<br/>Table field behavior characteristics (is nullable, is PK, is identity): false, false, false</remarks>
+		/// <remarks>Mapped on  table field: "category"."data".<br/>Table field type characteristics (type, precision, scale, length): Text, 0, 0, 1073741824.<br/>Table field behavior characteristics (is nullable, is PK, is identity): false, false, false</remarks>
 		public virtual System.String Data
 		{
 			get { return (System.String)GetValue((int)CategoryFieldIndex.Data, true); }
@@ -138,11 +138,19 @@ namespace YumCity_Migrations.EntityClasses
 		}
 
 		/// <summary>The Id property of the Entity Category<br/><br/></summary>
-		/// <remarks>Mapped on  table field: "Category"."Id".<br/>Table field type characteristics (type, precision, scale, length): Uuid, 0, 0, 0.<br/>Table field behavior characteristics (is nullable, is PK, is identity): false, true, false</remarks>
+		/// <remarks>Mapped on  table field: "category"."id".<br/>Table field type characteristics (type, precision, scale, length): Uuid, 0, 0, 0.<br/>Table field behavior characteristics (is nullable, is PK, is identity): false, true, false</remarks>
 		public virtual System.Guid Id
 		{
 			get { return (System.Guid)GetValue((int)CategoryFieldIndex.Id, true); }
 			set	{ SetValue((int)CategoryFieldIndex.Id, value); }
+		}
+
+		/// <summary>The IsActive property of the Entity Category<br/><br/></summary>
+		/// <remarks>Mapped on  table field: "category"."is_active".<br/>Table field type characteristics (type, precision, scale, length): Boolean, 0, 0, 0.<br/>Table field behavior characteristics (is nullable, is PK, is identity): false, false, false</remarks>
+		public virtual System.Boolean IsActive
+		{
+			get { return (System.Boolean)GetValue((int)CategoryFieldIndex.IsActive, true); }
+			set	{ SetValue((int)CategoryFieldIndex.IsActive, value); }
 		}
 		// __LLBLGENPRO_USER_CODE_REGION_START CustomEntityCode
 		// __LLBLGENPRO_USER_CODE_REGION_END
@@ -159,6 +167,8 @@ namespace YumCity_Migrations
 		Data,
 		///<summary>Id. </summary>
 		Id,
+		///<summary>IsActive. </summary>
+		IsActive,
 		/// <summary></summary>
 		AmountOfFields
 	}

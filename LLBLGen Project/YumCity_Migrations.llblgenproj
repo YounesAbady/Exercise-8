@@ -125,51 +125,58 @@
   <EntityModel>
     <ValueTypeDefinitions />
     <EntityDefinitions>
-      <EntityDefinition Name="Category" ObjectID="95b95cf3-74f8-47be-8b24-7688510256d0">
+      <EntityDefinition Name="Category" ObjectID="f3650bf5-0124-44d1-aa8c-caaba01c28e5">
         <Fields>
           <Field Name="Data" Type="string" MaxLength="1073741824" />
           <Field Name="Id" Type="guid" IsPrimaryKey="true" />
+          <Field Name="IsActive" Type="bool" />
         </Fields>
       </EntityDefinition>
-      <EntityDefinition Name="Ingredient" ObjectID="30874bb3-6120-48d1-9e01-4f6a75544be9">
+      <EntityDefinition Name="Ingredient" ObjectID="b8725c4b-78c1-444f-8de5-2818831c3790">
         <Fields>
           <Field Name="Data" Type="string" MaxLength="1073741824" />
           <Field Name="Id" Type="guid" IsPrimaryKey="true" />
+          <Field Name="IsActive" Type="bool" />
           <Field Name="RecipeId" Type="guid" />
         </Fields>
       </EntityDefinition>
-      <EntityDefinition Name="Instruction" ObjectID="cd7978ac-f2e2-4924-a65f-733e8811b282">
+      <EntityDefinition Name="Instruction" ObjectID="9a5a9670-9b7d-4ec5-80f3-b96b91d3b174">
         <Fields>
           <Field Name="Data" Type="string" MaxLength="1073741824" />
           <Field Name="Id" Type="guid" IsPrimaryKey="true" />
+          <Field Name="IsActive" Type="bool" />
           <Field Name="RecipeId" Type="guid" />
         </Fields>
       </EntityDefinition>
-      <EntityDefinition Name="Recipe" ObjectID="a50e7aef-e6de-4658-915f-10f951d5b266">
+      <EntityDefinition Name="Recipe" ObjectID="d2102a87-06df-4ab0-a6c1-a4b43191dab9">
         <Fields>
           <Field Name="Id" Type="guid" IsPrimaryKey="true" />
+          <Field Name="IsActive" Type="bool" />
           <Field Name="Title" Type="string" MaxLength="1073741824" />
           <Field Name="UserId" Type="guid" />
         </Fields>
       </EntityDefinition>
-      <EntityDefinition Name="RecipeCategory" ObjectID="2587b103-189b-4f6a-ac82-cfe5f60b8abe">
+      <EntityDefinition Name="RecipeCategory" ObjectID="5029285c-6cac-4e95-8212-2f0db617aeb6">
         <Fields>
           <Field Name="Data" Type="string" MaxLength="1073741824" />
           <Field Name="Id" Type="guid" IsPrimaryKey="true" />
+          <Field Name="IsActive" Type="bool" />
           <Field Name="RecipeId" Type="guid" />
         </Fields>
       </EntityDefinition>
-      <EntityDefinition Name="RefreshToken" ObjectID="d95eab90-11c2-4edc-a602-682b8a2f3d0c">
+      <EntityDefinition Name="RefreshToken" ObjectID="28851920-1a4f-4f46-a6a6-cd862cbbc53f">
         <Fields>
           <Field Name="Id" Type="guid" IsPrimaryKey="true" />
+          <Field Name="IsActive" Type="bool" />
           <Field Name="TimeCreated" Type="datetime" />
           <Field Name="TimeExpires" Type="datetime" />
           <Field Name="Token" Type="string" MaxLength="1073741824" />
         </Fields>
       </EntityDefinition>
-      <EntityDefinition Name="User" ObjectID="cceaba8a-8871-46eb-a1f3-f77b9b6eac64">
+      <EntityDefinition Name="User" ObjectID="8db9e83a-5030-406d-9487-9328638038e7">
         <Fields>
           <Field Name="Id" Type="guid" IsPrimaryKey="true" />
+          <Field Name="IsActive" Type="bool" />
           <Field Name="Name" Type="string" MaxLength="1073741824" />
           <Field Name="PasswordHash" Type="string" MaxLength="1073741824" />
           <Field Name="RefreshTokenId" Type="guid" IsOptional="true" />
@@ -221,92 +228,99 @@
       <Catalogs>
         <Catalog Name="YumCity" SyncSource="2">
           <Schemas>
-            <Schema Name="public" SyncSource="2" LastSyncWithDatabase="2022-09-07T11:40:10.8565623Z">
+            <Schema Name="public" SyncSource="2" LastSyncWithDatabase="2022-09-15T11:08:40.6694308Z">
               <Tables>
-                <Table Name="Category">
-                  <PkConstraintName Name="PK_Category" />
+                <Table Name="category">
+                  <PkConstraintName Name="PK_category" />
                   <Fields>
-                    <Field Name="Id" Ordinal="1" IsPrimaryKey="true" DbType="28" />
-                    <Field Name="Data" Ordinal="2" DbType="19" Length="1073741824" />
+                    <Field Name="id" Ordinal="1" IsPrimaryKey="true" DbType="28" />
+                    <Field Name="data" Ordinal="2" DbType="19" Length="1073741824" />
+                    <Field Name="is_active" Ordinal="3" DbType="0" />
                   </Fields>
                 </Table>
-                <Table Name="Ingredient">
-                  <PkConstraintName Name="PK_Ingredient" />
+                <Table Name="ingredient">
+                  <PkConstraintName Name="PK_ingredient" />
                   <Fields>
-                    <Field Name="Id" Ordinal="1" IsPrimaryKey="true" DbType="28" />
-                    <Field Name="Data" Ordinal="2" DbType="19" Length="1073741824" />
-                    <Field Name="RecipeId" Ordinal="3" DbType="28" />
+                    <Field Name="id" Ordinal="1" IsPrimaryKey="true" DbType="28" />
+                    <Field Name="data" Ordinal="2" DbType="19" Length="1073741824" />
+                    <Field Name="recipe_id" Ordinal="3" DbType="28" />
+                    <Field Name="is_active" Ordinal="4" DbType="0" />
                   </Fields>
                 </Table>
-                <Table Name="Instruction">
-                  <PkConstraintName Name="PK_Instruction" />
+                <Table Name="instruction">
+                  <PkConstraintName Name="PK_instruction" />
                   <Fields>
-                    <Field Name="Id" Ordinal="1" IsPrimaryKey="true" DbType="28" />
-                    <Field Name="Data" Ordinal="2" DbType="19" Length="1073741824" />
-                    <Field Name="RecipeId" Ordinal="3" DbType="28" />
+                    <Field Name="id" Ordinal="1" IsPrimaryKey="true" DbType="28" />
+                    <Field Name="data" Ordinal="2" DbType="19" Length="1073741824" />
+                    <Field Name="recipe_id" Ordinal="3" DbType="28" />
+                    <Field Name="is_active" Ordinal="4" DbType="0" />
                   </Fields>
                 </Table>
-                <Table Name="Recipe">
-                  <PkConstraintName Name="PK_Recipe" />
+                <Table Name="recipe">
+                  <PkConstraintName Name="PK_recipe" />
                   <Fields>
-                    <Field Name="Id" Ordinal="1" IsPrimaryKey="true" DbType="28" />
-                    <Field Name="Title" Ordinal="2" DbType="19" Length="1073741824" />
-                    <Field Name="UserId" Ordinal="3" DbType="28" />
+                    <Field Name="id" Ordinal="1" IsPrimaryKey="true" DbType="28" />
+                    <Field Name="title" Ordinal="2" DbType="19" Length="1073741824" />
+                    <Field Name="user_id" Ordinal="3" DbType="28" />
+                    <Field Name="is_active" Ordinal="4" DbType="0" />
                   </Fields>
                 </Table>
-                <Table Name="RecipeCategory">
-                  <PkConstraintName Name="PK_RecipeCategory" />
+                <Table Name="recipe_category">
+                  <PkConstraintName Name="PK_recipe_category" />
                   <Fields>
-                    <Field Name="Id" Ordinal="1" IsPrimaryKey="true" DbType="28" />
-                    <Field Name="Data" Ordinal="2" DbType="19" Length="1073741824" />
-                    <Field Name="RecipeId" Ordinal="3" DbType="28" />
+                    <Field Name="id" Ordinal="1" IsPrimaryKey="true" DbType="28" />
+                    <Field Name="data" Ordinal="2" DbType="19" Length="1073741824" />
+                    <Field Name="recipe_id" Ordinal="3" DbType="28" />
+                    <Field Name="is_active" Ordinal="4" DbType="0" />
                   </Fields>
                 </Table>
-                <Table Name="RefreshToken">
-                  <PkConstraintName Name="PK_RefreshToken" />
+                <Table Name="refresh_token">
+                  <PkConstraintName Name="PK_refresh_token" />
                   <Fields>
-                    <Field Name="Id" Ordinal="1" IsPrimaryKey="true" DbType="28" />
-                    <Field Name="Token" Ordinal="2" DbType="19" Length="1073741824" />
-                    <Field Name="TimeCreated" Ordinal="3" DbType="22" />
-                    <Field Name="TimeExpires" Ordinal="4" DbType="22" />
+                    <Field Name="id" Ordinal="1" IsPrimaryKey="true" DbType="28" />
+                    <Field Name="token" Ordinal="2" DbType="19" Length="1073741824" />
+                    <Field Name="time_created" Ordinal="3" DbType="22" />
+                    <Field Name="time_expires" Ordinal="4" DbType="22" />
+                    <Field Name="is_active" Ordinal="5" DbType="0" />
                   </Fields>
                 </Table>
-                <Table Name="User">
-                  <PkConstraintName Name="PK_User" />
+                <Table Name="user">
+                  <PkConstraintName Name="PK_user" />
                   <Fields>
-                    <Field Name="Id" Ordinal="1" IsPrimaryKey="true" DbType="28" />
-                    <Field Name="Name" Ordinal="2" DbType="19" Length="1073741824" />
-                    <Field Name="PasswordHash" Ordinal="3" DbType="19" Length="1073741824" />
-                    <Field Name="RefreshTokenId" Ordinal="4" IsOptional="true" DbType="28" />
+                    <Field Name="id" Ordinal="1" IsPrimaryKey="true" DbType="28" />
+                    <Field Name="name" Ordinal="2" DbType="19" Length="1073741824" />
+                    <Field Name="password_hash" Ordinal="3" DbType="19" Length="1073741824" />
+                    <Field Name="refresh_token_id" Ordinal="4" IsOptional="true" DbType="28" />
+                    <Field Name="is_active" Ordinal="5" DbType="0" />
                   </Fields>
                 </Table>
               </Tables>
             </Schema>
           </Schemas>
           <ForeignKeyConstraints>
-            <ForeignKeyConstraint Name="public:Ingredient:FK_Ingredient_RecipeId_Recipe_Id" DeleteRuleAction="1">
+            <ForeignKeyConstraint Name="public:ingredient:FK_ingredient_recipe_id_recipe_id" DeleteRuleAction="1">
               <FieldPairs>
-                <FieldPair PkField="public:Recipe:Id" FkField="public:Ingredient:RecipeId" />
+                <FieldPair PkField="public:recipe:id" FkField="public:ingredient:recipe_id" />
               </FieldPairs>
             </ForeignKeyConstraint>
-            <ForeignKeyConstraint Name="public:Instruction:FK_Instruction_RecipeId_Recipe_Id" DeleteRuleAction="1">
+            <ForeignKeyConstraint Name="public:instruction:FK_instruction_recipe_id_recipe_id" DeleteRuleAction="1">
               <FieldPairs>
-                <FieldPair PkField="public:Recipe:Id" FkField="public:Instruction:RecipeId" />
+                <FieldPair PkField="public:recipe:id" FkField="public:instruction:recipe_id" />
               </FieldPairs>
             </ForeignKeyConstraint>
-            <ForeignKeyConstraint Name="public:Recipe:FK_Recipe_UserId_User_Id">
+            <ForeignKeyConstraint Name="public:recipe:FK_recipe_user_id_user_id">
               <FieldPairs>
-                <FieldPair PkField="public:User:Id" FkField="public:Recipe:UserId" />
+                <FieldPair PkField="public:user:id" FkField="public:recipe:user_id" />
               </FieldPairs>
             </ForeignKeyConstraint>
-            <ForeignKeyConstraint Name="public:RecipeCategory:FK_RecipeCategory_RecipeId_Recipe_Id" DeleteRuleAction="1">
+            <ForeignKeyConstraint Name="public:recipe_category:FK_recipe_category_recipe_id_recipe_id" DeleteRuleAction="1">
               <FieldPairs>
-                <FieldPair PkField="public:Recipe:Id" FkField="public:RecipeCategory:RecipeId" />
+                <FieldPair PkField="public:recipe:id" FkField="public:recipe_category:recipe_id" />
               </FieldPairs>
             </ForeignKeyConstraint>
-            <ForeignKeyConstraint Name="public:User:FK_User_RefreshTokenId_RefreshToken_Id">
+            <ForeignKeyConstraint Name="public:user:FK_user_refresh_token_id_refresh_token_id">
               <FieldPairs>
-                <FieldPair PkField="public:RefreshToken:Id" FkField="public:User:RefreshTokenId" />
+                <FieldPair PkField="public:refresh_token:id" FkField="public:user:refresh_token_id" />
               </FieldPairs>
             </ForeignKeyConstraint>
           </ForeignKeyConstraints>
@@ -317,54 +331,61 @@
   <MappingStores>
     <MappingStore Type="88EBFD8C-CBDD-4452-88AF-1C99E41A123F">
       <EntityMappings>
-        <EntityMapping EntityName=":Category" TargetName="YumCity:public:Category">
+        <EntityMapping EntityName=":Category" TargetName="YumCity:public:category">
           <FieldMappings>
-            <FieldMapping FieldName="Data" TargetFieldName="Data" />
-            <FieldMapping FieldName="Id" TargetFieldName="Id" />
+            <FieldMapping FieldName="Data" TargetFieldName="data" />
+            <FieldMapping FieldName="Id" TargetFieldName="id" />
+            <FieldMapping FieldName="IsActive" TargetFieldName="is_active" />
           </FieldMappings>
         </EntityMapping>
-        <EntityMapping EntityName=":Ingredient" TargetName="YumCity:public:Ingredient">
+        <EntityMapping EntityName=":Ingredient" TargetName="YumCity:public:ingredient">
           <FieldMappings>
-            <FieldMapping FieldName="Data" TargetFieldName="Data" />
-            <FieldMapping FieldName="Id" TargetFieldName="Id" />
-            <FieldMapping FieldName="RecipeId" TargetFieldName="RecipeId" />
+            <FieldMapping FieldName="Data" TargetFieldName="data" />
+            <FieldMapping FieldName="Id" TargetFieldName="id" />
+            <FieldMapping FieldName="IsActive" TargetFieldName="is_active" />
+            <FieldMapping FieldName="RecipeId" TargetFieldName="recipe_id" />
           </FieldMappings>
         </EntityMapping>
-        <EntityMapping EntityName=":Instruction" TargetName="YumCity:public:Instruction">
+        <EntityMapping EntityName=":Instruction" TargetName="YumCity:public:instruction">
           <FieldMappings>
-            <FieldMapping FieldName="Data" TargetFieldName="Data" />
-            <FieldMapping FieldName="Id" TargetFieldName="Id" />
-            <FieldMapping FieldName="RecipeId" TargetFieldName="RecipeId" />
+            <FieldMapping FieldName="Data" TargetFieldName="data" />
+            <FieldMapping FieldName="Id" TargetFieldName="id" />
+            <FieldMapping FieldName="IsActive" TargetFieldName="is_active" />
+            <FieldMapping FieldName="RecipeId" TargetFieldName="recipe_id" />
           </FieldMappings>
         </EntityMapping>
-        <EntityMapping EntityName=":Recipe" TargetName="YumCity:public:Recipe">
+        <EntityMapping EntityName=":Recipe" TargetName="YumCity:public:recipe">
           <FieldMappings>
-            <FieldMapping FieldName="Id" TargetFieldName="Id" />
-            <FieldMapping FieldName="Title" TargetFieldName="Title" />
-            <FieldMapping FieldName="UserId" TargetFieldName="UserId" />
+            <FieldMapping FieldName="Id" TargetFieldName="id" />
+            <FieldMapping FieldName="IsActive" TargetFieldName="is_active" />
+            <FieldMapping FieldName="Title" TargetFieldName="title" />
+            <FieldMapping FieldName="UserId" TargetFieldName="user_id" />
           </FieldMappings>
         </EntityMapping>
-        <EntityMapping EntityName=":RecipeCategory" TargetName="YumCity:public:RecipeCategory">
+        <EntityMapping EntityName=":RecipeCategory" TargetName="YumCity:public:recipe_category">
           <FieldMappings>
-            <FieldMapping FieldName="Data" TargetFieldName="Data" />
-            <FieldMapping FieldName="Id" TargetFieldName="Id" />
-            <FieldMapping FieldName="RecipeId" TargetFieldName="RecipeId" />
+            <FieldMapping FieldName="Data" TargetFieldName="data" />
+            <FieldMapping FieldName="Id" TargetFieldName="id" />
+            <FieldMapping FieldName="IsActive" TargetFieldName="is_active" />
+            <FieldMapping FieldName="RecipeId" TargetFieldName="recipe_id" />
           </FieldMappings>
         </EntityMapping>
-        <EntityMapping EntityName=":RefreshToken" TargetName="YumCity:public:RefreshToken">
+        <EntityMapping EntityName=":RefreshToken" TargetName="YumCity:public:refresh_token">
           <FieldMappings>
-            <FieldMapping FieldName="Id" TargetFieldName="Id" />
-            <FieldMapping FieldName="TimeCreated" TargetFieldName="TimeCreated" />
-            <FieldMapping FieldName="TimeExpires" TargetFieldName="TimeExpires" />
-            <FieldMapping FieldName="Token" TargetFieldName="Token" />
+            <FieldMapping FieldName="Id" TargetFieldName="id" />
+            <FieldMapping FieldName="IsActive" TargetFieldName="is_active" />
+            <FieldMapping FieldName="TimeCreated" TargetFieldName="time_created" />
+            <FieldMapping FieldName="TimeExpires" TargetFieldName="time_expires" />
+            <FieldMapping FieldName="Token" TargetFieldName="token" />
           </FieldMappings>
         </EntityMapping>
-        <EntityMapping EntityName=":User" TargetName="YumCity:public:User">
+        <EntityMapping EntityName=":User" TargetName="YumCity:public:user">
           <FieldMappings>
-            <FieldMapping FieldName="Id" TargetFieldName="Id" />
-            <FieldMapping FieldName="Name" TargetFieldName="Name" />
-            <FieldMapping FieldName="PasswordHash" TargetFieldName="PasswordHash" />
-            <FieldMapping FieldName="RefreshTokenId" TargetFieldName="RefreshTokenId" />
+            <FieldMapping FieldName="Id" TargetFieldName="id" />
+            <FieldMapping FieldName="IsActive" TargetFieldName="is_active" />
+            <FieldMapping FieldName="Name" TargetFieldName="name" />
+            <FieldMapping FieldName="PasswordHash" TargetFieldName="password_hash" />
+            <FieldMapping FieldName="RefreshTokenId" TargetFieldName="refresh_token_id" />
           </FieldMappings>
         </EntityMapping>
       </EntityMappings>

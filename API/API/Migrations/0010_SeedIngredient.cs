@@ -5,37 +5,42 @@ namespace API.Migrations
     [Migration(10)]
     public class _0010_SeedIngredient : Migration
     {
-        public record Ingredient
+        public record ingredient
         {
-            public Guid Id { get; set; }
-            public string Data { get; set; }
-            public Guid RecipeId { get; set; }
+            public Guid id { get; set; }
+            public string data { get; set; }
+            public Guid recipe_id { get; set; }
+            public bool is_active { get; set; }
         }
-        List<Ingredient> ingredients = new()
+        List<ingredient> ingredients = new()
         {
-            new Ingredient
+            new ingredient
             {
-                Id = Guid.NewGuid(),
-                Data = "ing1 for test1",
-                RecipeId = Guid.Parse("dd98a0ab-8a29-4ad0-a631-ff6dea396644")
+                id = Guid.NewGuid(),
+                data = "ing1 for test1",
+                recipe_id = Guid.Parse("dd98a0ab-8a29-4ad0-a631-ff6dea396644"),
+                is_active = true
             },
-            new Ingredient
+            new ingredient
             {
-                Id = Guid.NewGuid(),
-                Data = "ing2 for test1",
-                RecipeId = Guid.Parse("dd98a0ab-8a29-4ad0-a631-ff6dea396644")
+                id = Guid.NewGuid(),
+                data = "ing2 for test1",
+                recipe_id = Guid.Parse("dd98a0ab-8a29-4ad0-a631-ff6dea396644"),
+                is_active= true
             },
-            new Ingredient
+            new ingredient
             {
-                Id = Guid.NewGuid(),
-                Data = "ing1 for test2",
-                RecipeId = Guid.Parse("f35ce39f-2105-482e-80b6-bddd5b0f663c")
+                id = Guid.NewGuid(),
+                data = "ing1 for test2",
+                recipe_id = Guid.Parse("f35ce39f-2105-482e-80b6-bddd5b0f663c"),
+                is_active = true
             },
-            new Ingredient
+            new ingredient
             {
-                Id = Guid.NewGuid(),
-                Data = "ing2 for test2",
-                RecipeId = Guid.Parse("f35ce39f-2105-482e-80b6-bddd5b0f663c")
+                id = Guid.NewGuid(),
+                data = "ing2 for test2",
+                recipe_id = Guid.Parse("f35ce39f-2105-482e-80b6-bddd5b0f663c"),
+                is_active=true
             }
         };
         public override void Down()
@@ -44,9 +49,9 @@ namespace API.Migrations
 
         public override void Up()
         {
-            foreach (Ingredient ingredient in ingredients)
+            foreach (ingredient ingredient in ingredients)
             {
-                Insert.IntoTable(tableName: "Ingredient").Row(ingredient);
+                Insert.IntoTable(tableName: "ingredient").Row(ingredient);
             }
         }
     }

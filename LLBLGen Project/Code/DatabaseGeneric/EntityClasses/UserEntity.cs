@@ -154,15 +154,23 @@ namespace YumCity_Migrations.EntityClasses
 		public static IPrefetchPathElement2 PrefetchPathRefreshToken { get { return _staticMetaData.GetPrefetchPathElement("RefreshToken", CommonEntityBase.CreateEntityCollection<RefreshTokenEntity>()); } }
 
 		/// <summary>The Id property of the Entity User<br/><br/></summary>
-		/// <remarks>Mapped on  table field: "User"."Id".<br/>Table field type characteristics (type, precision, scale, length): Uuid, 0, 0, 0.<br/>Table field behavior characteristics (is nullable, is PK, is identity): false, true, false</remarks>
+		/// <remarks>Mapped on  table field: "user"."id".<br/>Table field type characteristics (type, precision, scale, length): Uuid, 0, 0, 0.<br/>Table field behavior characteristics (is nullable, is PK, is identity): false, true, false</remarks>
 		public virtual System.Guid Id
 		{
 			get { return (System.Guid)GetValue((int)UserFieldIndex.Id, true); }
 			set	{ SetValue((int)UserFieldIndex.Id, value); }
 		}
 
+		/// <summary>The IsActive property of the Entity User<br/><br/></summary>
+		/// <remarks>Mapped on  table field: "user"."is_active".<br/>Table field type characteristics (type, precision, scale, length): Boolean, 0, 0, 0.<br/>Table field behavior characteristics (is nullable, is PK, is identity): false, false, false</remarks>
+		public virtual System.Boolean IsActive
+		{
+			get { return (System.Boolean)GetValue((int)UserFieldIndex.IsActive, true); }
+			set	{ SetValue((int)UserFieldIndex.IsActive, value); }
+		}
+
 		/// <summary>The Name property of the Entity User<br/><br/></summary>
-		/// <remarks>Mapped on  table field: "User"."Name".<br/>Table field type characteristics (type, precision, scale, length): Text, 0, 0, 1073741824.<br/>Table field behavior characteristics (is nullable, is PK, is identity): false, false, false</remarks>
+		/// <remarks>Mapped on  table field: "user"."name".<br/>Table field type characteristics (type, precision, scale, length): Text, 0, 0, 1073741824.<br/>Table field behavior characteristics (is nullable, is PK, is identity): false, false, false</remarks>
 		public virtual System.String Name
 		{
 			get { return (System.String)GetValue((int)UserFieldIndex.Name, true); }
@@ -170,7 +178,7 @@ namespace YumCity_Migrations.EntityClasses
 		}
 
 		/// <summary>The PasswordHash property of the Entity User<br/><br/></summary>
-		/// <remarks>Mapped on  table field: "User"."PasswordHash".<br/>Table field type characteristics (type, precision, scale, length): Text, 0, 0, 1073741824.<br/>Table field behavior characteristics (is nullable, is PK, is identity): false, false, false</remarks>
+		/// <remarks>Mapped on  table field: "user"."password_hash".<br/>Table field type characteristics (type, precision, scale, length): Text, 0, 0, 1073741824.<br/>Table field behavior characteristics (is nullable, is PK, is identity): false, false, false</remarks>
 		public virtual System.String PasswordHash
 		{
 			get { return (System.String)GetValue((int)UserFieldIndex.PasswordHash, true); }
@@ -178,7 +186,7 @@ namespace YumCity_Migrations.EntityClasses
 		}
 
 		/// <summary>The RefreshTokenId property of the Entity User<br/><br/></summary>
-		/// <remarks>Mapped on  table field: "User"."RefreshTokenId".<br/>Table field type characteristics (type, precision, scale, length): Uuid, 0, 0, 0.<br/>Table field behavior characteristics (is nullable, is PK, is identity): true, false, false</remarks>
+		/// <remarks>Mapped on  table field: "user"."refresh_token_id".<br/>Table field type characteristics (type, precision, scale, length): Uuid, 0, 0, 0.<br/>Table field behavior characteristics (is nullable, is PK, is identity): true, false, false</remarks>
 		public virtual Nullable<System.Guid> RefreshTokenId
 		{
 			get { return (Nullable<System.Guid>)GetValue((int)UserFieldIndex.RefreshTokenId, false); }
@@ -209,6 +217,8 @@ namespace YumCity_Migrations
 	{
 		///<summary>Id. </summary>
 		Id,
+		///<summary>IsActive. </summary>
+		IsActive,
 		///<summary>Name. </summary>
 		Name,
 		///<summary>PasswordHash. </summary>

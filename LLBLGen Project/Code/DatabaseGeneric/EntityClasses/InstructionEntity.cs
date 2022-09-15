@@ -142,7 +142,7 @@ namespace YumCity_Migrations.EntityClasses
 		public static IPrefetchPathElement2 PrefetchPathRecipe { get { return _staticMetaData.GetPrefetchPathElement("Recipe", CommonEntityBase.CreateEntityCollection<RecipeEntity>()); } }
 
 		/// <summary>The Data property of the Entity Instruction<br/><br/></summary>
-		/// <remarks>Mapped on  table field: "Instruction"."Data".<br/>Table field type characteristics (type, precision, scale, length): Text, 0, 0, 1073741824.<br/>Table field behavior characteristics (is nullable, is PK, is identity): false, false, false</remarks>
+		/// <remarks>Mapped on  table field: "instruction"."data".<br/>Table field type characteristics (type, precision, scale, length): Text, 0, 0, 1073741824.<br/>Table field behavior characteristics (is nullable, is PK, is identity): false, false, false</remarks>
 		public virtual System.String Data
 		{
 			get { return (System.String)GetValue((int)InstructionFieldIndex.Data, true); }
@@ -150,15 +150,23 @@ namespace YumCity_Migrations.EntityClasses
 		}
 
 		/// <summary>The Id property of the Entity Instruction<br/><br/></summary>
-		/// <remarks>Mapped on  table field: "Instruction"."Id".<br/>Table field type characteristics (type, precision, scale, length): Uuid, 0, 0, 0.<br/>Table field behavior characteristics (is nullable, is PK, is identity): false, true, false</remarks>
+		/// <remarks>Mapped on  table field: "instruction"."id".<br/>Table field type characteristics (type, precision, scale, length): Uuid, 0, 0, 0.<br/>Table field behavior characteristics (is nullable, is PK, is identity): false, true, false</remarks>
 		public virtual System.Guid Id
 		{
 			get { return (System.Guid)GetValue((int)InstructionFieldIndex.Id, true); }
 			set	{ SetValue((int)InstructionFieldIndex.Id, value); }
 		}
 
+		/// <summary>The IsActive property of the Entity Instruction<br/><br/></summary>
+		/// <remarks>Mapped on  table field: "instruction"."is_active".<br/>Table field type characteristics (type, precision, scale, length): Boolean, 0, 0, 0.<br/>Table field behavior characteristics (is nullable, is PK, is identity): false, false, false</remarks>
+		public virtual System.Boolean IsActive
+		{
+			get { return (System.Boolean)GetValue((int)InstructionFieldIndex.IsActive, true); }
+			set	{ SetValue((int)InstructionFieldIndex.IsActive, value); }
+		}
+
 		/// <summary>The RecipeId property of the Entity Instruction<br/><br/></summary>
-		/// <remarks>Mapped on  table field: "Instruction"."RecipeId".<br/>Table field type characteristics (type, precision, scale, length): Uuid, 0, 0, 0.<br/>Table field behavior characteristics (is nullable, is PK, is identity): false, false, false</remarks>
+		/// <remarks>Mapped on  table field: "instruction"."recipe_id".<br/>Table field type characteristics (type, precision, scale, length): Uuid, 0, 0, 0.<br/>Table field behavior characteristics (is nullable, is PK, is identity): false, false, false</remarks>
 		public virtual System.Guid RecipeId
 		{
 			get { return (System.Guid)GetValue((int)InstructionFieldIndex.RecipeId, true); }
@@ -187,6 +195,8 @@ namespace YumCity_Migrations
 		Data,
 		///<summary>Id. </summary>
 		Id,
+		///<summary>IsActive. </summary>
+		IsActive,
 		///<summary>RecipeId. </summary>
 		RecipeId,
 		/// <summary></summary>
